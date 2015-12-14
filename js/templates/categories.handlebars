@@ -1,0 +1,16 @@
+{{#each this}}
+    {{#if subCategories}}
+        <li class="subcat-btn">
+            <a>{{this.nameEN}} ></a>
+            <ol>
+                {{#each this.subCategories}}
+                    <li><a onclick="categoriesController.onMouseClick('{{this.id}}')" href="#/Products">{{this.nameEN}}</a></li>
+                {{/each}}
+            </ol>
+        </li>
+    {{else}}
+    {{#unless @last}}
+        <li><a onclick="categoriesController.onMouseClick('{{this.id}}')" href="#/Products">{{this.nameEN}}</a></li>
+    {{/unless}}
+    {{/if}}
+{{/each}}
