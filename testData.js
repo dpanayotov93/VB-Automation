@@ -13,7 +13,7 @@ var testData = {
     products: [
         {
             name: "product1",
-            info1: "blabla",
+            // info1: "blabla",
             info2: "huehuehue"
         },
         {
