@@ -210,7 +210,11 @@ div#OR {
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
     position: fixed;
-    margin-left: -3em;
+    width: 100%;
+    margin: 0 auto;
+    z-index: 99;
+    left: 0;
+    right: 0;
     text-align: center;
     max-height: 35em;
     overflow-y: auto;
@@ -235,7 +239,9 @@ div#OR {
 .collapse.in h3:hover {
     text-decoration: underline;
 }
-
+#filters-table td{
+    border-right: 1px solid #ddd;
+}
 #products-table td, td, th {
     vertical-align: middle;
     text-align: left;

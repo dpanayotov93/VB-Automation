@@ -23,17 +23,9 @@ var userController = {
         })
     },
     signIn: function() {
-        var email, password,
-            submitBtn  = document.getElementById("btn-log"),
-            accessLevel = 1;
-
-        submitBtn.addEventListener('click', function() {
-            email = document.getElementById("email1").value;
-            password = document.getElementById('exampleInputPassword1').value;
-
-            console.log('logging...');
-
-            var data;
+            var data,
+                email = document.getElementById("email1").value;
+                password = document.getElementById('exampleInputPassword1').value;
 
             $.ajax({
               type: "POST",
@@ -45,7 +37,8 @@ var userController = {
                   console.log();(statusMessage);
                   if (statusMessage === 'success') {
                       console.log();(data);
-                      $('#menu-profile').show();
+                      $('#addListItem').modal('hide');
+                      $('#menu-profile')[0].style.display = 'inline-block';
                       $('#menu-login').hide();
                       $('#menu-admin')[0].style.display = 'none';
                   } else {
@@ -55,8 +48,6 @@ var userController = {
                   }
               }
             });
-
-        })
     },
     signOut: function() {
         cart.style.display = 'none';

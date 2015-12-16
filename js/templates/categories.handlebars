@@ -2,26 +2,24 @@
     {{#if subCategories}}
     <li class="list-group-item"> <a data-toggle="collapse" data-parent="#accordion1" href="#subcat-{{@key}}">{{this.nameEN}}</a>
         <span class="caret"></span>
-
         <ul id="subcat-{{@key}}" class="collapse">
             {{#each subCategories}}
                 <!-- <li><a href="#" onclick="productsController.get('{{this.nameEN}}')" class="list-group-item" data-parent="#sub-{{@key}}" role="button" aria-haspopup="true" aria-expanded="false">{{this.nameEN}}</a></li> -->
                 <li class="list-group-item"> <a data-toggle="collapse" data-parent="#accordion1" href="#subcat-item-{{@key}}">{{this.nameEN}}</a>
                     <span class="caret"></span>
-
-                    <ul onclick="productsController.get('{{this.nameEN}}')" id="subcat-item-{{@key}}" class="collapse">
-                        <div class="media">
-                          <div class="media-left media-middle">
-                            <a href="#">
-                              <img class="media-object" width="100em" src="/emag/img/sample-product.png">
-                            </a>
-                          </div>
-                          <div class="media-body">
-                            <h4 class="media-heading">{{this.nameEN}}</h4>
-                            {{this.descEN}}
-                          </div>
-                        </div>
-                    </ul>
+                        <ul  onclick="window.location.hash = '#/Products'" id="subcat-item-{{@key}}" class="collapse">
+                            <div class="media">
+                              <div class="media-left media-middle">
+                                <a>
+                                  <img class="media-object" width="100em" src="/emag/img/sample-product.png">
+                                </a>
+                              </div>
+                              <div class="media-body">
+                                <h4 class="media-heading">{{this.nameEN}}</h4>
+                                {{this.descEN}}
+                              </div>
+                            </div>
+                        </ul>
                 </li>
             {{/each}}
         </ul>
@@ -31,7 +29,7 @@
     <li class="list-group-item"> <a data-toggle="collapse" data-parent="#accordion1" href="#cat-{{@key}}">{{this.nameEN}}</a>
         <span class="caret"></span>
 
-        <ul onclick="productsController.get('{{this.nameEN}}')" id="cat-{{@key}}" class="collapse">
+        <ul onclick="window.location.hash = '#/Products'" id="cat-{{@key}}" class="collapse">
             <div class="media">
               <div class="media-left media-middle">
                 <a href="#">
