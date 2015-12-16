@@ -1,19 +1,91 @@
-<div id="products-list">
-    <div id="compare-panel">
+<div class="jumbotron">
+  <h2>Filters</h2>
+  <div class="table-responsive">
+      <table id="filters-table" class="table dataTable table-responsive table-hover">
+          <thead>
+              {{#each filters}}
+                {{#if @first}}
+                    {{#each this}}
+                        <th>
 
-    </div>
+                        </th>
+                        {{#each this}}
+                          <th>
 
-    <!-- {{#each this}}
-    <div class="product">
-        <img src="{{imgurl}}" alt="" />
-        {{#each this}}
-            {{#unless @last}}
-                <label>{{@key}}</label>
-                <span>'{{this}}'</span>
-            {{/unless}}
-        {{/each}}
-        <button onclick="userController.addToCart('{{this.system}}')" type="button" id="add-to-cart">Add</button>
-        <button onclick="productsController.compare()" type="button" id="compare-product">Compare</button>
-    </div>
-    {{/each}} -->
+                          </th>
+                        {{/each}}
+                    {{/each}}
+                {{/if}}
+              {{/each}}
+          </thead>
+          <tbody>
+              {{#each filters}}
+              <tr>
+                      {{#each this}}
+                          {{#if @first}}
+                              <td class="info">
+                                {{this}}
+                              </td>
+                          {{/if}}
+                          <!-- {{#each this}} -->
+                              <td>
+                                  <a onclick="productsController.filter('{{../../this.name}}', '{{this}}', '{{../../this.id}}')">
+                                      {{this}}
+                                  </a>
+                              </td>
+                          <!-- {{/each}} -->
+                      {{/each}}
+              </tr>
+              {{/each}}
+          <tbody>
+      </table>
+</div>
+
+  <h1>Products</h1>
+
+  <table id="products-table" class="table table-responsive table-hover">
+      <thead class="thead-inverse">
+          <tr>
+                  {{#each products}}
+                  {{#if @first}}
+                    {{#each this}}
+                        <th>
+                            {{@key}}
+                        </th>
+                    {{/each}}
+                  {{/if}}
+                  {{/each}}
+                  <th>
+                      Purchase
+                  </th>
+                  <th>
+                      Compare
+                  </th>
+          </tr>
+      </thead>
+      <tbody>
+          {{#each products}}
+              <tr>
+                  {{#each this}}
+                  {{#if @last}}
+                    <td>
+                        <img class="img-responsive img-responsive-2" src="{{this}}"/>
+                    </td>
+                    {{else}}
+                    <td>
+                        {{this}}
+                    </td>
+                    {{/if}}
+                  {{/each}}
+                  <td>
+                      <button onclick="productsController.addToCart('{{this.name}}')" type="button" class="btn-block">Add To Cart</button>
+                  </td>
+                  <td>
+                      <input type="checkbox" class="checkbox-primary" value="">
+                  </td>
+              </tr>
+          {{/each}}
+    </tbody>
+  </table>
+
 </div>

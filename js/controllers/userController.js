@@ -1,12 +1,11 @@
 var userController = {
     signUp: function() {
-        var containerWrap = document.getElementById("sign-pane"),
-            btnSignUp = document.getElementById('user-btn-get'),
+        var btnSignUp = document.getElementById('btn-reg'),
             email, password;
 
         btnSignUp.addEventListener('click', function() {
-            var email = document.getElementById("user-email").value;
-            var password = document.getElementById('user-password').value;
+            var email = document.getElementById("email").value;
+            var password = document.getElementById('password').value;
             console.log('Registering...');
             var data;
 
@@ -17,7 +16,6 @@ var userController = {
               dataType: "json",
               success: function(data) {
                   console.log(data.status.message);
-                  containerWrap.hide();
                   document.body.style.overflowY = 'auto';
               }
             });
@@ -26,15 +24,12 @@ var userController = {
     },
     signIn: function() {
         var email, password,
-            submitBtn  = document.getElementById("submit-btn"),
-            joinLi  = document.getElementById("join-li"),
-            containerWrap = document.getElementById("sign-pane"),
-            cart = document.getElementById('cart'),
+            submitBtn  = document.getElementById("btn-log"),
             accessLevel = 1;
 
         submitBtn.addEventListener('click', function() {
-            email = document.getElementById("username-input").value;
-            password = document.getElementById('password-input').value;
+            email = document.getElementById("email1").value;
+            password = document.getElementById('exampleInputPassword1').value;
 
             console.log('logging...');
 
@@ -47,23 +42,16 @@ var userController = {
               dataType: "json",
               success: function(data) {
                   var statusMessage = data.status.type;
-                  alert(statusMessage);
+                  console.log();(statusMessage);
                   if (statusMessage === 'success') {
-                      alert(data);
-                      containerWrap.style.visibility = 'hidden';
-                      containerWrap.style.opacity = '0';
-                      document.body.style.overflowY = 'auto';
-
-                      $('#join-li')[0].style.display = 'none';
-
-                    //   cookiesController.set(email, password);
-                      //
-                    //   if (data.signin[0].access > 1) {
-                    //       document.getElementById('admin-tools').style.display = 'inline';
-                    //   }
+                      console.log();(data);
+                      $('#menu-profile').show();
+                      $('#menu-login').hide();
+                      $('#menu-admin')[0].style.display = 'none';
                   } else {
-                    //   errorMessage = document.getElementById('signIn-error-massage');
-                    //   errorMessage.innerHTML = 'WRONG USERNAME AND PASSWORD COMBINATION!';
+                      $('#menu-profile').show();
+                      $('#menu-login').hide();
+                      $('#menu-admin').show();
                   }
               }
             });

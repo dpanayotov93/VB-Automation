@@ -1,14 +1,21 @@
 var testData = {
     categories: [
-        { nameEN: "First Category" },
-        { nameEN: "Second Category" },
-        { nameEN: "Third Category" },
-        { nameEN: "Forth Category" },
-        { nameEN: "Fifth Category" },
-        { nameEN: "Sixth Category" },
-        { nameEN: "Seventh Category" },
-        { nameEN: "Eighth Category" },
-        { nameEN: "Ninth Category" }
+        { nameEN: "First Category", descEN:"HABHAB AHBAHABHAHABHABHAVAGBAGABGAAG" },
+        { nameEN: "Second Category", descEN:"HABHAB AHBAHABHAHABHABHAVAGBAGABGAAG" },
+        { nameEN: "Third Category", descEN:"HABHAB AHBAHABHAHABHABHAVAGBAGABGAAG" },
+        { nameEN: "Forth Category", descEN:"HABHAB AHBAHABHAHABHABHAVAGBAGABGAAG" },
+        { nameEN: "Fifth Category", descEN:"HABHAB AHBAHABHAHABHABHAVAGBAGABGAAG" },
+        { nameEN: "Sixth Category", descEN:"HABHAB AHBAHABHAHABHABHAVAGBAGABGAAG" },
+        { nameEN: "Seventh Category", descEN:"HABHAB AHBAHABHAHABHABHAVAGBAGABGAAG" },
+        { nameEN: "Eighth Category", descEN:"HABHAB AHBAHABHAHABHABHAVAGBAGABGAAG" },
+        {
+            nameEN: "Ninth Category",
+            subCategories: [
+                { nameEN: "First SubCategory" },
+                { nameEN: "Second SubCategory" },
+                { nameEN: "Third SubCategory" }
+            ]
+        }
     ],
     products: [
         {
@@ -86,7 +93,7 @@ var testData = {
             name: "system",
             system: {
                 0: "Incremental encoders",
-                // 1: "singleturn",
+                1: "singleturn",
                 2: "Absolute encoders"
             }
         },

@@ -1,96 +1,251 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8">
-    	<meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>E-Shop</title>
-
-    	<link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
-
-    	<link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
-        <link rel="stylesheet" href="css/style.css"> <!-- Resource style -->
-
-        <link rel="stylesheet" href="js/stacktable/stacktable.css"> <!-- Resource style -->
-        <!-- <link rel="stylesheet" href="js/stacktable/css/style.css"> <!-- Resource style --> -->
-
-        <link rel="stylesheet" href="css/master.css">
-        <link rel="stylesheet" href="css/log-reg-pane.css">
-        <link rel="stylesheet" href="css/loading-bar.css">
-        <link rel="stylesheet" href="css/promo-products.css">
-        <link rel="stylesheet" href="js/dynatables/jquery.dynatable.css">
-
-        <script src="js/modernizr.js"></script> <!-- Modernizr -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <title>VB Automation</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.10/css/dataTables.bootstrap.min.css"> -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/dt/dt-1.10.10,r-2.0.0/datatables.min.css"/>
+        <link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/emag/css/style.css">
+        <link rel="stylesheet" href="/emag/css/sidebar.css">
     </head>
-    <body onload="categoriesController.onLoaded">
-        <header>
-    		<div class="cd-logo"><a href="#/Home">VB Automation</a></div>
+    <body>
 
-    		<nav class="cd-main-nav-wrapper">
-    			<ul class="cd-main-nav">
-    				<li><a href="#/Home">Home</a></li>
-    				<!-- <li><a href="#/Products">Products</a></li> -->
-    				<li><a href="#/Partners">Partners</a></li>
-    				<li><a href="#/Contacts">Contacts</a></li>
-    				<li>
-    					<a href="#" class="cd-subnav-trigger"><span>Products</span></a>
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-default navbar-fixed-top">
+          <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Menu</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">VB Automation</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="">
+                        <span class="glyphicon glyphicon-home"></span>
+                         Home
+                    </a>
+                </li>
+                <li>
+                    <a href="#about">
+                        <span class="glyphicon glyphicon-briefcase"></span>
+                        Partners
+                    </a>
+                </li>
+                <li>
+                    <a href="#contact">
+                        <span class="glyphicon glyphicon-envelope"></span>
+                         Contacts
+                    </a>
+                </li>
+                <li class="dropdown">
+                  <a href="#categories" class="dropdown-toggle" data-toggle="collapse" role="button" aria-haspopup="true" aria-expanded="false">
+                      <span class="glyphicon glyphicon-th-list"></span>
+                        Products
+                      <span class="caret"></span>
+                  </a>
+                  <ul id="categories" class="collapse">
 
-    					<ul id="categories-list">
-    						<li class="go-back"><a>Menu</a></li>
-                            {{#each this}}
-                                <li><a onclick="categoriesController.onMouseClick('{{this.id}}')" href="#/Products">{{this.nameEN}}</a></li>
-                            {{/each}}
-    						<li><a href="#0" class="placeholder">Placeholder</a></li>
-    					</ul>
-    				</li>
-                    <li id="join-li"><a class="btns-sign" id="btn-sign-in">JOIN</a></div>
-                    <li><a alt="Cart" id="cart" onclick=""></a></li>
-                    <li><a alt="search" id="search-icon" onclick="searchShowHide()"></a></li>
-                </ul> <!-- .cd-main-nav -->
-    		</nav> <!-- .cd-main-nav-wrapper -->
+                  </ul>
+                </li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                  <li id="li-search-icon" class="desktop">
+                          <form action="" class="search-form">
+                              <div class="form-group has-feedback">
+                          		<label for="search" class="sr-only">Search</label>
+                          		<input type="text" class="form-control" name="search" id="search" placeholder="search">
+                            		<span class="glyphicon glyphicon-search form-control-feedback"></span>
+                          	</div>
+                          </form>
+                  </li>
+                <!-- <li><a href="../navbar/"><span class="glyphicon glyphicon-search"></span></a></li> -->
+                <li><a href="#menu-toggle" id="menu-toggle"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+                <li><a href="" id="menu-admin"><span class="glyphicon glyphicon-king"></span> Admin</a></li>
+                <li><a href="#profile" onclick="userController.showProfile()" id="menu-profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                <li><a id="menu-login" data-toggle="modal" data-target="#mdl-join"><span class="glyphicon glyphicon-user"></span> Login</a></li>
+          </ul>
+            </div><!--/.nav-collapse -->
+          </div>
+        </nav>
 
-    		<a href="#/Products" class="cd-nav-trigger">Menu<span></span></a>
-    	</header>
-        <main class="cd-main-content">
+        <div id="wrapper">
 
-            <div id="sign-pane"></div>
-            <div id="filters-list"></div>
-            <article id="container">
-                <div class="spinner">
-                  <div class="rect1"></div>
-                  <div class="rect2"></div>
-                  <div class="rect3"></div>
-                  <div class="rect4"></div>
-                  <div class="rect5"></div>
+            <!-- Sidebar -->
+            <div id="sidebar-wrapper">
+
+            </div>
+            <!-- /#sidebar-wrapper -->
+
+            <div id="page-content-wrapper" class="container">
+              <!-- Main component for a primary marketing message or call to action -->
+              <div class="jumbotron">
+                <h1>Welcome</h1>
+
+                <h2>Promotions</h2>
+                <div class="row">
+                  <div class="col-xs-6 col-md-3">
+                    <a class="thumbnail">
+                      <img src="/emag/img/sample-product.png" alt="promo">
+                    </a>
+                  </div>
+                  <div class="col-xs-6 col-md-3">
+                    <a class="thumbnail">
+                      <img src="/emag/img/sample-product.png" alt="promo">
+                    </a>
+                  </div>
+                  <div class="col-xs-6 col-md-3">
+                    <a class="thumbnail">
+                      <img src="/emag/img/sample-product.png" alt="promo">
+                    </a>
+                  </div>
+                  <div class="col-xs-6 col-md-3">
+                    <a class="thumbnail">
+                      <img src="/emag/img/sample-product.png" alt="promo">
+                    </a>
+                  </div>
                 </div>
-            </article>
-            <footer>
-                Copyright (c) 2015 by Dimitar Panayotov and Velko Todorov. All Rights Reserved.
-            </footer>
-        </main>
-        <!-- External Libraries -->
-            <script src="node_modules/jquery/dist/jquery.js"></script>
-            <script src="node_modules/sammy/lib/sammy.js"></script>
-            <script src="node_modules/handlebars/dist/handlebars.js"></script>
-            <script src="node_modules/desandro-classie/classie.js"></script>
-            <script src="js/dynatables/jquery.dynatable.js"></script>
-            <script src="js/stacktable/stacktable.js"></script>
-        <!-- Internal Scripts -->
-            <!-- Controllers -->
-            <script src="js/controllers/contactsController.js"></script>
-            <script src="js/controllers/homeController.js"></script>
-            <script src="js/controllers/partnersController.js"></script>
-            <script src="js/controllers/productsController.js"></script>
-            <script src="js/controllers/navigationController.js"></script>
-            <script src="js/controllers/categoriesController.js"></script>
-            <script src="js/controllers/userController.js"></script>
-            <script src="js/controllers/cookiesController.js"></script>
-            <!-- Templates -->
-            <script src="js/templates.js"></script>
-            <!-- Main -->
-            <script src="js/app.js"></script>
-            <!-- Other -->
-            <script src="js/testData.js"></script>
 
-            <script src="js/main.js"></script>
+                <h2>Agenda</h2>
+                <p>Vestibulum non aliquet risus. Integer pretium, metus sed dictum tristique, mi justo sodales felis, et pharetra nulla nisi tristique diam. Phasellus quis dictum eros. Quisque egestas velit orci, vitae scelerisque magna euismod eu. Sed pretium eros sed pulvinar ullamcorper. Praesent vel sem in tortor convallis viverra. Donec quis gravida erat, vitae dignissim leo. Cras ornare ac elit eget commodo. In felis risus, finibus at ex nec, vehicula bibendum lacus. Vivamus porttitor rhoncus sapien feugiat luctus. Integer erat velit, porta vel ornare in, feugiat non nisl. Praesent ac tortor lectus. Praesent ac tellus id tellus accumsan laoreet sit amet vitae purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+                <p>Vestibulum non aliquet risus. Integer pretium, metus sed dictum tristique, mi justo sodales felis, et pharetra nulla nisi tristique diam. Phasellus quis dictum eros. Quisque egestas velit orci, vitae scelerisque magna euismod eu. Sed pretium eros sed pulvinar ullamcorper. Praesent vel sem in tortor convallis viverra. Donec quis gravida erat, vitae dignissim leo. Cras ornare ac elit eget commodo. In felis risus, finibus at ex nec, vehicula bibendum lacus. Vivamus porttitor rhoncus sapien feugiat luctus. Integer erat velit, porta vel ornare in, feugiat non nisl. Praesent ac tortor lectus. Praesent ac tellus id tellus accumsan laoreet sit amet vitae purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+              </div>
+
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="mdl-join" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                ×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-11" >
+                                    <!-- Nav tabs -->
+                                    <ul class="nav nav-tabs">
+                                        <li class="active"><a href="#Login" data-toggle="tab">Login</a></li>
+                                        <li><a href="#Registration" data-toggle="tab">Registration</a></li>
+                                    </ul>
+                                    <!-- Tab panes -->
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="Login">
+                                            <form role="form" class="form-horizontal">
+                                            <div class="form-group">
+                                                <label for="email" class="col-sm-2 control-label">
+                                                    Username</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="email1" placeholder="Email" />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="exampleInputPassword1" class="col-sm-2 control-label">
+                                                    Password</label>
+                                                <div class="col-sm-10">
+                                                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-2">
+                                                </div>
+                                                <div class="col-sm-10">
+                                                    <button onclick="userController.signIn()" id="btn-log" type="submit" class="btn btn-primary btn-sm">
+                                                        Submit</button>
+                                                    <a href="javascript:;">Forgot your password?</a>
+                                                </div>
+                                            </div>
+                                            </form>
+                                        </div>
+                                        <div class="tab-pane" id="Registration">
+                                            <form role="form" class="form-horizontal">
+
+                                            <div class="form-group">
+                                                <label for="email" class="col-sm-2 control-label">
+                                                    Username</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="email" placeholder="Email" />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="password" class="col-sm-2 control-label">
+                                                    Password</label>
+                                                <div class="col-sm-10">
+                                                    <input type="password" class="form-control" id="password" placeholder="Password" />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-2">
+                                                </div>
+                                                <div class="col-sm-10">
+                                                    <button id="btn-reg" type="button" class="btn btn-primary btn-sm">
+                                                        Submit</button>
+                                                    <!-- <button type="button" class="btn btn-default btn-sm">
+                                                        Cancel</button> -->
+                                                </div>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!-- <div id="OR" class="hidden-xs">
+                                        OR</div> -->
+                                </div>
+                                <!-- <div class="col-md-4">
+                                    <div class="row text-center sign-with">
+                                        <div class="col-md-12">
+                                            <h3>
+                                                Sign in with</h3>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="btn-group btn-group-justified">
+                                                <a href="#" class="btn btn-primary">Facebook</a> <a href="#" class="btn btn-danger">
+                                                    Google</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- /Container -->
+
+
+        <!-- Bootstrap
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/s/dt/dt-1.10.10,r-2.0.0/datatables.min.js"></script>
+
+        <!-- handlebars
+        ================================================== -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+
+
+        <!-- User
+        ================================================== -->
+        <script src="/emag/js/app.js"></script>
+        <script src="/emag/js/testData.js"></script>
+        <script src="/emag/js/templates.js"></script>
+        <script src="/emag/js/controllers/categoriesController.js"></script>
+        <script src="/emag/js/controllers/productsController.js"></script>
+        <script src="/emag/js/controllers/userController.js"></script>
+
     </body>
 </html>
