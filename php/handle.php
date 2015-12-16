@@ -30,6 +30,7 @@
 		echo "<form method=post action=handle.php>
 		<input type=text name=q />
 		<input type=text value=email name=email />
+		<input type=text value=user name=user />
 		<input type=text value=pass name=pass />
 		<input type=text value=id name=id />
 		<input type=text value=name name=names[EN] />
