@@ -12,7 +12,7 @@ var productsController = {
 
         $.ajax({
             type: "POST",
-            url: "../VB-Automation/php/handle.php",
+            url: "../emag/php/handle.php",
             dataType: 'json',
             data: { q:"selectCat", id:tempId },
             success: function(data) {
