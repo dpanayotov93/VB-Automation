@@ -132,5 +132,8 @@ var testData = {
         value: [
 
         ]
+    },
+    user: {
+
     }
 }
