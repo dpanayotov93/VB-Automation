@@ -34,9 +34,10 @@ var userController = {
               dataType: "json",
               success: function(data) {
                   var statusMessage = data.status.type;
-                  console.log();(statusMessage);
+                  console.log(data);
                   if (statusMessage === 'success') {
-                      console.log();(data);
+                      console.log(); (data);
+                      cookiesController.set(email, password);
                       $('#addListItem').modal('hide');
                       $('#menu-profile')[0].style.display = 'inline-block';
                       $('#menu-login').hide();
@@ -150,5 +151,38 @@ var userController = {
         });
 
         userController.signUp();
+    },
+    showProfile: function() {
+        var email = cookiesController.get('email');
+
+        alert('PROFILE: ' + email);
+
+        $.ajax({
+            type: "POST",
+            url: "../emag/php/handle.php",
+            dataType: 'json',
+            data: { q: "getUserInfo", user: email },
+            success: function (data) {
+                console.log(data);
+                templates.load('profile')
+                    .then(function (templateHtml) {
+                        $('#page-content-wrapper').html(templateHtml(data.getUserInfo[0]));
+
+                        $('#menu-profile').parent().addClass('active');
+                        $('.dropdown-toggle').parent().removeClass('active');
+                        $('ul.nav a[href=""]').parent().removeClass('active');
+                    });
+
+            },
+            error: function () {
+                templates.load('products')
+                    .then(function (templateHtml) {
+                        $('#page-content-wrapper').html(templateHtml(testData));
+                    });
+            },
+            beforeSend: function () {
+                console.log('Getting Profile Information...');
+            }
+        });
     }
 }

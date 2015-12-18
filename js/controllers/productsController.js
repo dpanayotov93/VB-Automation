@@ -4,6 +4,7 @@ var productsController = {
         // window.history.pushState('products', 'Products', '/#/products');
 
         $('.dropdown-toggle').parent().addClass('active');
+        $('#menu-profile').parent().removeClass('active');
         $('ul.nav a[href=""]').parent().removeClass('active');
 
         console.log(id);
@@ -19,16 +20,9 @@ var productsController = {
                 templates.load('products')
                     .then(function(templateHtml) {
                         $('#page-content-wrapper').html(templateHtml(data.selectCat));
-                        // $('#filters-table').dataTable({
-                        //     responsive: true,
-                        //     "bPaginate": false,
-                        //     "bFilter": false,
-                        //     "bSort": false,
-                        //     "bInfo": false
-                        // });
-                        $('#products-table').dataTable({
-                            responsive: true
-                        });
+                            $('#products-table').dataTable({
+                                responsive: true
+                            });
                     });
 
             },
@@ -60,6 +54,7 @@ var productsController = {
     },
     addToCart: function(name) {
         cart.push(name);
+        console.log(name);
         templates.load('cart')
             .then(function(templateHtml) {
                 $('#sidebar-wrapper').html(templateHtml(cart));

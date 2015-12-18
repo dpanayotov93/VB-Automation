@@ -10,13 +10,16 @@ li, a {
 }
 
 li.active a {
-    color: #000 !important;
 }
 
-navbar a:active{color:#aaa !important;}
-navbar a:hover{color:#333 !important;}
-navbar a:focus{color:#aaa !important;}
+.profile-sidebar li a {color: #333 !important;}
+.navbar-default .navbar-nav>.active>a {background: #fff !important}
+navbar a:active{color:#fff !important;}
+navbar a:hover{color:#fff !important;}
+navbar a:focus{color:#fff !important;}
 navbar a{color:#fff !important;}
+a:visited {color:#fff !important;}
+li.active a {color: #000 !important;}
 
 /*a.dropdown-toggle:hover{color:#aaa !important;}
 a.dropdown-toggle:active{color:#aaa !important;}
@@ -53,7 +56,7 @@ a.dropdown-toggle{color:#aaa !important;}*/
 
 .navbar-default .navbar-brand,
 .navbar-default .navbar-nav>li>a {
-    color: rgb(255,255,255);
+    color: #fff;
 }
 
 .navbar-brand:hover {
@@ -64,17 +67,21 @@ a.dropdown-toggle{color:#aaa !important;}*/
     max-height: 100%;
 }
 
-.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
-    background-color: rgb(255, 255, 255);
+@media screen and (max-width: 480px) {
+    #navbar {
+        height: 100em;
+    }
 }
 
+
 .navbar-default .navbar-nav>li>a:hover {
-    color: rgb(0,0,0);
+    color: #eee;
 }
 
 .navbar-default .navbar-nav>li:hover {
-    background-color: rgb(255,255,255);
+    text-decoration: underline;
 }
+
 
 .navbar-default .navbar-brand:hover {
     color: rgb(255,255,255);
@@ -210,6 +217,7 @@ div#OR {
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
     position: fixed;
+    padding: 0;
     width: 100%;
     margin: 0 auto;
     z-index: 99;
@@ -221,6 +229,11 @@ div#OR {
     overflow-x: hidden;
 }
 
+@media screen and (min-width: 480px) {
+    #categories {
+        box-shadow: 0px 5px 10px #555;
+    }
+}
 
 .img-cat {
     margin-top: -5em;
@@ -239,9 +252,7 @@ div#OR {
 .collapse.in h3:hover {
     text-decoration: underline;
 }
-#filters-table td{
-    border-right: 1px solid #ddd;
-}
+
 #products-table td, td, th {
     vertical-align: middle;
     text-align: left;
@@ -277,4 +288,15 @@ div#OR {
 
 .media-body{
     padding: 2em;
+}
+
+
+.dataTables_filter input {
+    width: 80vw;
+    border :none;
+    box-shadow: 0 0 10px #333;
+}
+
+#filters-table thead {
+    display: none;
 }

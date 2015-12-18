@@ -1,0 +1,6 @@
+﻿var profileController = {
+    edit: function() {
+
+
+    }
+}

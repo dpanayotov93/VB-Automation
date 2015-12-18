@@ -7,9 +7,10 @@ $(document).ready(function() {
         });
 
         // this.get('#/Home', homeController.init);
-        this.get('#/Products', productsController.get);
-        // this.get('#/Partners', partnersController.init);
-        // this.get('#/Contacts', contactsController.init);
+        this.get('#/Products', productsController.get); 
+        this.get('#/Profile', userController.showProfile);
+        this.get('#/Partners', partnersController.init);
+        this.get('#/Contact', contactController.init);
 
     });
 
