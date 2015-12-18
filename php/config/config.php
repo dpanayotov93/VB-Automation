@@ -8,9 +8,9 @@ include "sqlClasses.inc";
 
 function sqlConnectDefault() {
 	$servername = "localhost";
-	$username = "emag";
-	$password = "emagpass";
-	$dbname = "emag";
+	$username = "VB-Automation";
+	$password = "VB-Automationpass";
+	$dbname = "VB-Automation";
 
 	$conn = new mysqli($servername, $username, $password, $dbname);
 	if (checkConnection($conn))
@@ -21,8 +21,8 @@ function sqlConnectDefault() {
 
 function sqlConnectDB($dbname) {
 	$servername = "localhost";
-	$username = "emag";
-	$password = "emagpass";
+	$username = "VB-Automation";
+	$password = "VB-Automationpass";
 
 	$conn = new mysqli($servername, $username, $password, $dbname);
 	if (checkConnection($conn))

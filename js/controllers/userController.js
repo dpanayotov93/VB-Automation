@@ -11,7 +11,7 @@ var userController = {
 
             $.ajax({
               type: "POST",
-              url: "../emag/php/handle.php",
+              url: "../VB-Automation/php/handle.php",
               data: { q:'signup', email:email, pass:password },
               dataType: "json",
               success: function(data) {
@@ -29,7 +29,7 @@ var userController = {
 
             $.ajax({
               type: "POST",
-              url: "../emag/php/handle.php",
+              url: "../VB-Automation/php/handle.php",
               data: { q:'signin', email:email, pass:password },
               dataType: "json",
               success: function(data) {
@@ -75,7 +75,7 @@ var userController = {
         // console.log(email[1] + ' ' + password[1]);
         // $.ajax({
         //   type: "POST",
-        //   url: "../emag/php/handle.php",
+        //   url: "../VB-Automation/php/handle.php",
         //   data: { q:'signin', email:email[1], pass:password[1] },
         //   dataType: "json",
         //   success: function(data) {
@@ -159,7 +159,7 @@ var userController = {
 
         $.ajax({
             type: "POST",
-            url: "../emag/php/handle.php",
+            url: "../VB-Automation/php/handle.php",
             dataType: 'json',
             data: { q: "getUserInfo", user: email },
             success: function (data) {
@@ -175,9 +175,13 @@ var userController = {
 
             },
             error: function () {
-                templates.load('products')
+                templates.load('profile')
                     .then(function (templateHtml) {
-                        $('#page-content-wrapper').html(templateHtml(testData));
+                        $('#page-content-wrapper').html(templateHtml(testData.user));
+
+                        $('#menu-profile').parent().addClass('active');
+                        $('.dropdown-toggle').parent().removeClass('active');
+                        $('ul.nav a[href=""]').parent().removeClass('active');
                     });
             },
             beforeSend: function () {
