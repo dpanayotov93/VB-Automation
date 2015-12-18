@@ -231,7 +231,7 @@ div#OR {
 
 @media screen and (min-width: 480px) {
     #categories {
-        box-shadow: 0px 5px 10px #555;
+        box-shadow: 0px 2.5px 5px #666;
     }
 }
 
@@ -282,7 +282,6 @@ div#OR {
 
 #categories ul {
     font-weight: 300;
-    text-align: right;
     padding: 0;
 }
 
@@ -299,4 +298,61 @@ div#OR {
 
 #filters-table thead {
     display: none;
+}
+
+.media-body {
+    text-align: left;
+}
+
+.dataTables_wrapper .dataTables_length {
+    float: right;
+}
+
+input,
+#message,
+textarea,
+img,
+button,
+.btn-block
+ {
+    border: none;
+    outline: none;
+    box-shadow: 0px 0px 5px #999;
+}
+
+.thumbnail {
+    border: none;
+}
+
+.btn-block {
+    background: rgb(49,156,255);
+    color: #fff;
+}
+
+table.dataTable.dtr-inline.collapsed > tbody > tr > td:first-child::before, table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child::before {
+    top: 35%;
+    left: 4px;
+    height: 16px;
+    width: 16px;
+    display: block;
+    position: absolute;
+    color: #FFF;
+    border: none;
+    border-radius: 0;
+    box-shadow: 0px 0px 2.5px #666;
+    box-sizing: content-box;
+    font-family: "Courier New",Courier,monospace;
+    text-indent: 4px;
+    line-height: 18px;
+    content: "+";
+    background-color: #D45301;
+}
+
+.form-group .btn-success {
+    width: 100%;
+    font-size: 2em;
+}
+
+.contact-container {
+    margin-left: 15%;
 }

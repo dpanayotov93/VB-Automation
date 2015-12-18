@@ -66,6 +66,9 @@
       <tbody>
           {{#each products}}
               <tr>
+                  <td>
+                      <button onclick="productsController.addToCart('{{this.system}}')" type="button" class="btn-block">ADD</button>
+                  </td>
                   {{#each this}}
                   {{#if @last}}
                     <td>
@@ -77,9 +80,6 @@
                     </td>
                     {{/if}}
                   {{/each}}
-                  <td>
-                      <button onclick="productsController.addToCart('{{this.system}}')" type="button" class="btn-block">Add To Cart</button>
-                  </td>
                   <td>
                       <input type="checkbox" class="checkbox-primary" value="">
                   </td>
