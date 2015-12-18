@@ -155,8 +155,6 @@ var userController = {
     showProfile: function() {
         var email = cookiesController.get('email');
 
-        alert('PROFILE: ' + email);
-
         $.ajax({
             type: "POST",
             url: "../emag/php/handle.php",
