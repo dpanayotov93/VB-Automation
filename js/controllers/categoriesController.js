@@ -2,7 +2,7 @@ var categoriesController = {
     get: function() {
         $.ajax({
             type: "POST",
-            url: "../VB-Automation/php/handle.php",
+            url: "../emag/php/handle.php",
             dataType: 'json',
             data: { q:"categories"},
             success: function(data) {
