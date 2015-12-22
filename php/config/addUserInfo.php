@@ -16,12 +16,12 @@
 		mysqli_close($conn);
 		return;
 	}
-	
-	$selQ->select = "u.id as uid, i.userid as iid";
-	$selQ->tableName = array("user_info as i", "users as u");
+	$selQ = new selectSQL($conn);
+	$selQ->select = array("u.id as uid", "i.userid as iid");
+	$selQ->tableNames = array("user_info as i", "users as u");
 	$selQ->joinTypes = array("RIGHT OUTER JOIN");
 	$selQ->joins = array("u.id = i.userid");
-	$selQ->where = "u.email='".$id."'";
+	$selQ->where = "u.id='".$id."'";
 	
 	if (!$selQ->executeQuery()) {
 		$statusMessage = $selQ->status;
@@ -41,7 +41,7 @@
 		$insQ = new insertSQL($conn);
 		$insQ->insertData = array();
 		$insQ->cols = array("fname","lname","firm","address","city","country","phone");
-		foreach ($columns as $c)
+		foreach ($insQ->cols as $c)
 			if (isset($_POST[$c]) && !empty(($_POST[$c])))
 				$insQ->insertData[] = $conn->real_escape_string($_POST[$c]);
 			else
@@ -63,7 +63,7 @@
 				$updQ->update .= $c."='". $conn->real_escape_string($_POST[$c])."',";
 		if (empty($updQ->update)) {
 			$statusMessage = makeStatusMessage(12,"error","Nothing to update");
-			mysqli_close($oonn);
+			mysqli_close($conn);
 			return;
 		}
 		if(substr($update, -1, 1) == ',')

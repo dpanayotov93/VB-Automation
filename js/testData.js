@@ -132,5 +132,15 @@ var testData = {
         value: [
 
         ]
+    },
+    user: {
+        address: 'Test Street N25',
+        city: 'Test City',
+        country: 'Test Country',
+        email: 'testEmail@test.com',
+        firm: 'Test Company',
+        fname: 'Test',
+        lname: 'User',
+        phone: '0898989898'
     }
 }

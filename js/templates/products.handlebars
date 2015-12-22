@@ -46,40 +46,43 @@
   <table id="products-table" class="table table-responsive table-hover">
       <thead class="thead-inverse">
           <tr>
-                  {{#each products}}
-                  {{#if @first}}
-                    {{#each this}}
-                        <th>
-                            {{@key}}
-                        </th>
-                    {{/each}}
-                  {{/if}}
-                  {{/each}}
-                  <th>
-                      Purchase
-                  </th>
-                  <th>
-                      Compare
-                  </th>
+              <th>
+                  Purchase
+              </th>
+                {{#each products}}
+                    {{#if @first}}
+                        {{#each this}}
+                            <th>
+                                {{@key}}
+                            </th>
+                        {{/each}}
+                    {{/if}}
+                {{/each}}
+                <th>
+                    Compare
+                </th>
           </tr>
       </thead>
       <tbody>
           {{#each products}}
               <tr>
-                  {{#each this}}
-                  {{#if @last}}
-                    <td>
-                        <img class="img-responsive img-responsive-2" src="{{this}}"/>
-                    </td>
-                    {{else}}
-                    <td>
-                        {{this}}
-                    </td>
-                    {{/if}}
-                  {{/each}}
                   <td>
-                      <button onclick="productsController.addToCart('{{this.name}}')" type="button" class="btn-block">Add To Cart</button>
+                      <button onclick="productsController.addToCart('{{this.system}}')" type="button" class="btn-block">ADD</button>
                   </td>
+                  {{#each this}}
+                      {{#if @last}}
+                        <td>
+                            <img class="img-responsive img-responsive-2" src="{{this}}"/>
+                        </td>
+                      {{/if}}
+                  {{/each}}
+                  {{#each this}}
+                    {{#unless @last}}
+                        <td>
+                            {{this}}
+                        </td>
+                    {{/unless}}
+                  {{/each}}
                   <td>
                       <input type="checkbox" class="checkbox-primary" value="">
                   </td>
