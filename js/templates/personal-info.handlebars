@@ -1,0 +1,57 @@
+﻿<div class="alert alert-info alert-dismissable">
+    <a class="panel-close close" data-dismiss="alert">×</a>
+    <i class="fa fa-coffee"></i>
+    Fill in your information in order to continue!
+</div>
+<h3>Personal info</h3>
+
+<form class="form-horizontal" role="form">
+    <div class="form-group">
+        <label class="col-lg-3 control-label">First name:</label>
+        <div class="col-lg-8">
+            <input id="fname" class="form-control" type="text" value="Jane" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">Last name:</label>
+        <div class="col-lg-8">
+            <input id="lname" class="form-control" type="text" value="Bishop" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">Company:</label>
+        <div class="col-lg-8">
+            <input id="firm" class="form-control" type="text" value="Enter your company" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">Country:</label>
+        <div class="col-lg-8">
+            <input id="country" class="form-control" type="text" value="Enter your country" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">City:</label>
+        <div class="col-lg-8">
+            <input id="city" class="form-control" type="text" value="Enter your city" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">Address:</label>
+        <div class="col-lg-8">
+            <input id="address" class="form-control" type="text" value="Enter your address" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">Phone:</label>
+        <div class="col-lg-8">
+            <input id="tel" class="form-control" type="text" value="Enter your phone" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-3 control-label"></label>
+        <div class="col-md-8">
+            <input onclick="userController.signUp('{{email}}','{{password}}')" type="button" class="btn btn-primary" value="Save Changes">
+        </div>
+    </div>
+</form>

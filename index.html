@@ -11,6 +11,9 @@
         <link rel="stylesheet" href="/emag/css/style.css">
         <link rel="stylesheet" href="/emag/css/profile.css">
         <link rel="stylesheet" href="/emag/css/sidebar.css">
+        <link rel="stylesheet" href="http://css-spinners.com/css/spinner/throbber.css" type="text/css">
+        
+        <link rel='shortcut icon' type='image/x-icon' href='/emag/favicon.ico' />
     </head>
     <body>
 
@@ -35,13 +38,13 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#/Partners">
+                    <a id="menu-partners" href="#/Partners">
                         <span class="glyphicon glyphicon-briefcase"></span>
                         Partners
                     </a>
                 </li>
                 <li>
-                    <a href="#/Contact">
+                    <a id="menu-contacts" href="#/Contact">
                         <span class="glyphicon glyphicon-envelope"></span>
                          Contacts
                     </a>
@@ -71,7 +74,7 @@
                 <li><a href="#menu-toggle" id="menu-toggle"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
                 <li><a href="" id="menu-admin"><span class="glyphicon glyphicon-king"></span> Admin</a></li>
                 <li><a href="#/Profile" id="menu-profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                <li><a id="menu-login" data-toggle="modal" data-target="#mdl-join"><span class="glyphicon glyphicon-user"></span> Login</a></li>
+                <li><a onclick="userController.showModal()" id="menu-login" data-toggle="modal" data-target="#mdl-join"><span class="glyphicon glyphicon-user"></span> Login</a></li>
           </ul>
             </div><!--/.nav-collapse -->
           </div>
@@ -94,137 +97,27 @@
             <!-- /#sidebar-wrapper -->
 
             <div id="page-content-wrapper" class="container">
-              <!-- Main component for a primary marketing message or call to action -->
-              <div class="jumbotron">
-                <h1>Welcome</h1>
-
-                <h2>Promotions</h2>
-                <div class="row">
-                  <div class="col-xs-6 col-md-3">
-                    <a class="thumbnail">
-                      <img src="/emag/img/sample-product.png" alt="promo">
-                    </a>
-                  </div>
-                  <div class="col-xs-6 col-md-3">
-                    <a class="thumbnail">
-                      <img src="/emag/img/sample-product.png" alt="promo">
-                    </a>
-                  </div>
-                  <div class="col-xs-6 col-md-3">
-                    <a class="thumbnail">
-                      <img src="/emag/img/sample-product.png" alt="promo">
-                    </a>
-                  </div>
-                  <div class="col-xs-6 col-md-3">
-                    <a class="thumbnail">
-                      <img src="/emag/img/sample-product.png" alt="promo">
-                    </a>
-                  </div>
+                <div class="jumbotron">
+                    <div class="container" style="text-align: center; padding-top: 10em;">
+                        <div class="throbber-loader">
+                            Loading…
+                        </div>
+                    </div>
                 </div>
-
-                <h2>Agenda</h2>
-                <p>Vestibulum non aliquet risus. Integer pretium, metus sed dictum tristique, mi justo sodales felis, et pharetra nulla nisi tristique diam. Phasellus quis dictum eros. Quisque egestas velit orci, vitae scelerisque magna euismod eu. Sed pretium eros sed pulvinar ullamcorper. Praesent vel sem in tortor convallis viverra. Donec quis gravida erat, vitae dignissim leo. Cras ornare ac elit eget commodo. In felis risus, finibus at ex nec, vehicula bibendum lacus. Vivamus porttitor rhoncus sapien feugiat luctus. Integer erat velit, porta vel ornare in, feugiat non nisl. Praesent ac tortor lectus. Praesent ac tellus id tellus accumsan laoreet sit amet vitae purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
-                <p>Vestibulum non aliquet risus. Integer pretium, metus sed dictum tristique, mi justo sodales felis, et pharetra nulla nisi tristique diam. Phasellus quis dictum eros. Quisque egestas velit orci, vitae scelerisque magna euismod eu. Sed pretium eros sed pulvinar ullamcorper. Praesent vel sem in tortor convallis viverra. Donec quis gravida erat, vitae dignissim leo. Cras ornare ac elit eget commodo. In felis risus, finibus at ex nec, vehicula bibendum lacus. Vivamus porttitor rhoncus sapien feugiat luctus. Integer erat velit, porta vel ornare in, feugiat non nisl. Praesent ac tortor lectus. Praesent ac tellus id tellus accumsan laoreet sit amet vitae purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
-              </div>
-
             </div>
 
             <!-- Modal -->
             <div class="modal fade" id="mdl-join" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
                 aria-hidden="true">
-                <div class="modal-dialog modal-lg">
+                <div id="modal" class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                ×</button>
+                                ×
+                            </button>
                         </div>
                         <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-11" >
-                                    <!-- Nav tabs -->
-                                    <ul class="nav nav-tabs">
-                                        <li class="active"><a href="#Login" data-toggle="tab">Login</a></li>
-                                        <li><a href="#Registration" data-toggle="tab">Registration</a></li>
-                                    </ul>
-                                    <!-- Tab panes -->
-                                    <div class="tab-content">
-                                        <div class="tab-pane active" id="Login">
-                                            <form role="form" class="form-horizontal">
-                                            <div class="form-group">
-                                                <label for="email" class="col-sm-2 control-label">
-                                                    Username</label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="email1" placeholder="Email" />
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1" class="col-sm-2 control-label">
-                                                    Password</label>
-                                                <div class="col-sm-10">
-                                                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" />
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-2">
-                                                </div>
-                                                <div class="col-sm-10">
-                                                    <button onclick="userController.signIn()" id="btn-log" data-dismiss="modal" class="btn btn-primary btn-sm">
-                                                        Submit</button>
-                                                    <a href="javascript:;">Forgot your password?</a>
-                                                </div>
-                                            </div>
-                                            </form>
-                                        </div>
-                                        <div class="tab-pane" id="Registration">
-                                            <form role="form" class="form-horizontal">
-
-                                            <div class="form-group">
-                                                <label for="email" class="col-sm-2 control-label">
-                                                    Username</label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="email" placeholder="Email" />
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="password" class="col-sm-2 control-label">
-                                                    Password</label>
-                                                <div class="col-sm-10">
-                                                    <input type="password" class="form-control" id="password" placeholder="Password" />
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-2">
-                                                </div>
-                                                <div class="col-sm-10">
-                                                    <button id="btn-reg" type="button" class="btn btn-primary btn-sm">
-                                                        Continue</button>
-                                                    <!-- <button type="button" class="btn btn-default btn-sm">
-                                                        Cancel</button> -->
-                                                </div>
-                                            </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <!-- <div id="OR" class="hidden-xs">
-                                        OR</div> -->
-                                </div>
-                                <!-- <div class="col-md-4">
-                                    <div class="row text-center sign-with">
-                                        <div class="col-md-12">
-                                            <h3>
-                                                Sign in with</h3>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="btn-group btn-group-justified">
-                                                <a href="#" class="btn btn-primary">Facebook</a> <a href="#" class="btn btn-danger">
-                                                    Google</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
-                            </div>
                         </div>
-                    </div>
                 </div>
             </div>
 
@@ -256,6 +149,7 @@
         <script src="/emag/js/controllers/categoriesController.js"></script>
         <script src="/emag/js/controllers/productsController.js"></script>
         <script src="/emag/js/controllers/userController.js"></script>
+        <script src="/emag/js/controllers/homeController.js"></script>
         <script src="/emag/js/controllers/profileController.js"></script>
         <script src="/emag/js/controllers/partnersController.js"></script>
         <script src="/emag/js/controllers/contactController.js"></script>

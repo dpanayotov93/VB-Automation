@@ -1,31 +1,65 @@
+/* global testData */
+/* global cookiesController */
+var userData = {};
 var userController = {
-    signUp: function() {
-        var btnSignUp = document.getElementById('btn-reg'),
-            email, password;
+    showModal: function () {
+        templates.load('signPage')
+                    .then(function (templateHtml) {
+                        $('.modal-body').html(templateHtml);
+                    });
+    },
+    signUp: function (email, password) {
+        var q = 'addUserInfo',
+            id = cookiesController.get('userId'),
+            fname = document.getElementById('fname').value,
+            lname = document.getElementById('lname').value,
+            firm = document.getElementById('firm').value,
+            country = document.getElementById('country').value,
+            city = document.getElementById('city').value,
+            address = document.getElementById('address').value,
+            tel = document.getElementById('tel').value;
 
-        btnSignUp.addEventListener('click', function() {
-            var email = document.getElementById("email").value;
-            var password = document.getElementById('password').value;
-            console.log('Registering...');
-            var data;
+            console.log('Registering: \n' + id + '\n' + email + "\n" + password + "\n" + fname + "\n" + lname + "\n" + firm + "\n" + country + "\n" + city + "\n" + address + "\n" + tel);
 
             $.ajax({
-              type: "POST",
-              url: "../emag/php/handle.php",
-              data: { q:'signup', email:email, pass:password },
-              dataType: "json",
-              success: function(data) {
-                  console.log(data.status.message);
-                  document.body.style.overflowY = 'auto';
-              }
+                type: "POST",
+                url: "../emag/php/handle.php",
+                data: { q: q, id: id, email: email, fname: fname, lname: lname, firm: firm, country: country, city: city, address: address, phone: tel },
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function(data) {
+                    console.log(data);
+                }
             });
+    },
+    personalInfo: function (email, password) {
+        console.log(email + password);
+        userData.email = email;
+        userData.password = password;
 
-        })
+        cookiesController.set(email, password);
+
+        $.ajax({
+            type: "POST",
+            url: "../emag/php/handle.php",
+            data: { q: 'signup', email: email, pass: password },
+            dataType: "json",
+            success: function (data) {
+                userController.keepSession();
+                templates.load('personal-info')
+                    .then(function (templateHtml) {
+                        userData.id = cookiesController.get('userId')
+                        console.log(userData);
+                        $('.modal-body').html(templateHtml(userData));
+                    });
+            }
+        });
     },
     signIn: function() {
-            var data,
-                email = document.getElementById("email1").value;
-                password = document.getElementById('exampleInputPassword1').value;
+            var email = document.getElementById("email1").value,
+            password = document.getElementById('exampleInputPassword1').value;
 
             $.ajax({
               type: "POST",
@@ -36,74 +70,73 @@ var userController = {
                   var statusMessage = data.status.type;
                   console.log(data);
                   if (statusMessage === 'success') {
-                      console.log(); (data);
+                      console.log(); 
                       cookiesController.set(email, password);
+
+                      userData.id = data.signin.id;
+                      console.log('id ' + userData.id);
                       $('#addListItem').modal('hide');
                       $('#menu-profile')[0].style.display = 'inline-block';
                       $('#menu-login').hide();
                       $('#menu-admin')[0].style.display = 'none';
-                  } else {
-                      $('#menu-profile').show();
-                      $('#menu-login').hide();
-                      $('#menu-admin').show();
+                      
+                      if(data.signin[0].access === '3') {
+                          console.log('Welcome Admin!');
+                          $('#menu-admin')[0].style.display = 'inline-block';
+                      }
                   }
               }
             });
     },
     signOut: function() {
-        cart.style.display = 'none';
-        cookiesController.del();
-        // location.reload();
+        console.log('Signing out...');
+        $('#menu-profile')[0].style.display = 'none';
+        $('#menu-login').show();
+        $('#menu-admin')[0].style.display = 'none';
+        cookiesController.del('email');
+        cookiesController.del('password');
+        cookiesController.del('userId');
+        window.location.href = "http://78.90.40.202/emag/";
     },
     addToCart: function(name) {
         testData.cart.push(name);
     },
     keepSession: function() {
-        // var email, password, errorMessage;
-        // var containerWrap = document.getElementById("sign-pane-wrap");
-        // var btnSignUp = document.getElementById('user-btn-signUp');
-        // var btnSignIn = document.getElementById('user-btn-signIn');
-        // var btnNavSignIn = document.getElementById('btn-sign-in');
-        // var btnNavSignUp = document.getElementById('btn-sign-up');
-        // var btnNavSignOut = document.getElementById('btn-sign-out');
-        // var cart = document.getElementById('cart');
-        // var accessLevel = 1;
-        // var value = document.cookie || " ";
-        // var parts = value.split("; ");
-        // var email = parts[0].split("=");
-        // var password = parts[1].split("=");
-        // console.log(email[1] + ' ' + password[1]);
-        // $.ajax({
-        //   type: "POST",
-        //   url: "../emag/php/handle.php",
-        //   data: { q:'signin', email:email[1], pass:password[1] },
-        //   dataType: "json",
-        //   success: function(data) {
-        //       console.log(data);
-        //       var statusMessage = data.status.type;
-        //       if (statusMessage === 'success') {
-        //           console.log(data);
-        //           containerWrap.style.visibility = 'hidden';
-        //           containerWrap.style.opacity = '0';
-        //           document.body.style.overflowY = 'auto';
-        //
-        //           btnNavSignIn.style.display = 'none';
-        //           btnNavSignUp.style.display = 'none';
-        //           btnNavSignOut.style.display = 'inline';
-        //           cart.style.display = 'inline';
-        //
-        //           if (data.signin[0].access > 1) {
-        //               document.getElementById('admin-tools').style.display = 'inline';
-        //           }
-        //       } else {
-        //           errorMessage = document.getElementById('signIn-error-massage');
-        //           errorMessage.innerHTML = 'WRONG USERNAME AND PASSWORD COMBINATION!';
-        //       }
-        //   },
-        //   error: function(data) {
-        //       console.log(data);
-        //   }
-        // });
+        var email = cookiesController.get('email'),
+        password = cookiesController.get('password');
+
+        $.ajax({
+            type: "POST",
+            url: "../emag/php/handle.php",
+            data: { q: 'signin', email: email, pass: password },
+            dataType: "json",
+            success: function (data) {
+                var statusMessage = data.status.type,
+                    date = new Date(),
+                    cookieUserId;
+                    
+                console.log(data);
+                if (statusMessage === 'success') {
+                    console.log(statusMessage);
+                    
+                    userData.id = data.signin[0].id;
+                    
+                    date.setTime(date.getTime()+(7*24*60*60*1000));
+                    cookieUserId = "userId=" + data.signin[0].id + '; expires=' + date;
+                    document.cookie = cookieUserId;
+                    
+                    
+                    $('#addListItem').modal('hide');
+                    $('#menu-profile')[0].style.display = 'inline-block';
+                    $('#menu-login').hide();
+                    $('#menu-admin')[0].style.display = 'none';
+                    if(data.signin[0].access === '3') {
+                        console.log('Welcome Admin!');
+                        $('#menu-admin')[0].style.display = 'inline-block';
+                    }
+                }
+            }
+        });
     },
     showPanel: function() {
         $('.form').find('input, textarea').on('keyup blur focus', function (e) {
@@ -155,8 +188,6 @@ var userController = {
     showProfile: function() {
         var email = cookiesController.get('email');
 
-        console.log('fuck you');
-
         $.ajax({
             type: "POST",
             url: "../emag/php/handle.php",
@@ -168,9 +199,19 @@ var userController = {
                     .then(function (templateHtml) {
                         $('#page-content-wrapper').html(templateHtml(data.getUserInfo[0]));
 
+                        $('#menu-partners').parent().removeClass('active');
+                        $('#menu-contacts').parent().removeClass('active');
                         $('#menu-profile').parent().addClass('active');
                         $('.dropdown-toggle').parent().removeClass('active');
                         $('ul.nav a[href=""]').parent().removeClass('active');
+
+                        data.getUserInfo[0].username = cookiesController.get('email');  
+                        data.getUserInfo[0].password = cookiesController.get('password');
+
+                        templates.load('profile-info')
+                            .then(function (templateHtml) {
+                                $('#profile-content').html(templateHtml(data.getUserInfo[0]));
+                            });
                     });
 
             },
