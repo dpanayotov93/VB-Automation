@@ -1,19 +1,24 @@
 <?php
-	$conn = sqlConnectDefault();
+	if (!isset($_POST["user"])) {
+		$statusMessage = makeStatusMessage(2,"error","Incomplete query request...");
+		return;
+	}
 
+
+	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
 		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
 		return;
 	}
 	
-	$email = $conn->real_escape_string($_POST["email"]);
+	$username = $conn->real_escape_string($_POST["user"]);
 	
 	$selQ = new selectSQL($conn);
 	$selQ->select = array ("email", "fname", "lname", "firm", "address", "city", "country", "phone");
-	$selQ->tableName = array("user_info as i", "users as u");
+	$selQ->tableNames = array("user_info as i", "users as u");
 	$selQ->joinTypes = array("RIGHT OUTER JOIN");
 	$selQ->joins = array("u.id = i.userid");
-	$selQ->where = "u.email='".$email."'";
+	$selQ->where = "u.user='".$username."'";
 	
 	if (!$selQ->executeQuery()) {
 		$statusMessage = $selQ->status;

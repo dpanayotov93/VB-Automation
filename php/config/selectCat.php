@@ -93,7 +93,7 @@
 	}
 	
 	$selQ->select = $propNames;
-	$selQ->select[] = "imgurl";
+	$selQ->select[] = "imgurl as Image";
 	$selQ->tableNames = array ("products_".$id);
 	if (!$selQ->executeQuery()){
 		$statusMessage = $selQ->statusl;
