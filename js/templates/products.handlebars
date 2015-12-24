@@ -49,6 +49,9 @@
               <th>
                   Purchase
               </th>
+              <th>
+                  Compare
+              </th>              
                 {{#each products}}
                     {{#if @first}}
                         {{#each this}}
@@ -58,17 +61,17 @@
                         {{/each}}
                     {{/if}}
                 {{/each}}
-                <th>
-                    Compare
-                </th>
           </tr>
       </thead>
       <tbody>
           {{#each products}}
-              <tr>
+              <tr>                  
                   <td>
                       <button onclick="productsController.addToCart('{{this.system}}')" type="button" class="btn-block">ADD</button>
                   </td>
+                  <td>
+                      <input type="checkbox" onchange="productsController.compare('{{this.system}}')" class="checkbox-primary" value="">
+                  </td>                
                   {{#each this}}
                       {{#if @last}}
                         <td>
@@ -83,9 +86,6 @@
                         </td>
                     {{/unless}}
                   {{/each}}
-                  <td>
-                      <input type="checkbox" onchange="productsController.compare()" class="checkbox-primary" value="">
-                  </td>
               </tr>
           {{/each}}
     </tbody>

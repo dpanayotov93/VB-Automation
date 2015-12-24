@@ -1,3 +1,4 @@
+/* global cookiesController */
 var userData = {};
 var userController = {
     showModal: function () {
@@ -6,8 +7,9 @@ var userController = {
                         $('.modal-body').html(templateHtml);
                     });
     },
-    signUp: function (email, password, id) {
-        var q = 'addUserInfo';
+    signUp: function (email, password) {
+        var q = 'addUserInfo',
+            id = cookiesController.get('userId'),
             fname = document.getElementById('fname').value,
             lname = document.getElementById('lname').value,
             firm = document.getElementById('firm').value,
@@ -21,7 +23,7 @@ var userController = {
             $.ajax({
                 type: "POST",
                 url: "../emag/php/handle.php",
-                data: { q: q, id: id, email: email, fname: fname, lname: lname, firm: firm, country: country, city: city, address: address, tel: tel },
+                data: { q: q, id: id, email: email, fname: fname, lname: lname, firm: firm, country: country, city: city, address: address, phone: tel },
                 dataType: "json",
                 success: function (data) {
                     console.log(data);
@@ -47,6 +49,8 @@ var userController = {
                 userController.keepSession();
                 templates.load('personal-info')
                     .then(function (templateHtml) {
+                        userData.id = cookiesController.get('userId')
+                        console.log(userData);
                         $('.modal-body').html(templateHtml(userData));
                     });
             }
@@ -68,30 +72,31 @@ var userController = {
                       console.log(); 
                       cookiesController.set(email, password);
 
-                      userData.id = data.status.id;
+                      userData.id = data.signin.id;
                       console.log('id ' + userData.id);
                       $('#addListItem').modal('hide');
                       $('#menu-profile')[0].style.display = 'inline-block';
                       $('#menu-login').hide();
                       $('#menu-admin')[0].style.display = 'none';
-                  } else {
-                      $('#menu-profile').show();
-                      $('#menu-login').hide();
-                      $('#menu-admin').show();
                   }
               }
             });
     },
     signOut: function() {
-        cart.style.display = 'none';
-        cookiesController.del();
-        // location.reload();
+        console.log('Signing out...');
+        $('#menu-profile')[0].style.display = 'none';
+        $('#menu-login').show();
+        $('#menu-admin')[0].style.display = 'none';
+        cookiesController.del('email');
+        cookiesController.del('password');
+        cookiesController.del('userId');
+        window.location.href = "http://78.90.40.202/emag/";
     },
     addToCart: function(name) {
         testData.cart.push(name);
     },
     keepSession: function() {
-        var email = cookiesController.get('email');
+        var email = cookiesController.get('email'),
         password = cookiesController.get('password');
 
         $.ajax({
@@ -100,20 +105,26 @@ var userController = {
             data: { q: 'signin', email: email, pass: password },
             dataType: "json",
             success: function (data) {
-                var statusMessage = data.status.type;
+                var statusMessage = data.status.type,
+                    date = new Date(),
+                    cookieUserId;
+                    
                 console.log(data);
                 if (statusMessage === 'success') {
                     console.log(statusMessage);
-                    userData.id = data.status.id;
+                    
+                    userData.id = data.signin[0].id;
+                    
+                    date.setTime(date.getTime()+(7*24*60*60*1000));
+                    cookieUserId = "userId=" + data.signin[0].id + '; expires=' + date;
+                    document.cookie = cookieUserId;
+                    
+                    
                     console.log('id ' + userData.id);
                     $('#addListItem').modal('hide');
                     $('#menu-profile')[0].style.display = 'inline-block';
                     $('#menu-login').hide();
                     $('#menu-admin')[0].style.display = 'none';
-                } else {
-                    $('#menu-profile').show();
-                    $('#menu-login').hide();
-                    $('#menu-admin').show();
                 }
             }
         });
@@ -179,13 +190,18 @@ var userController = {
                     .then(function (templateHtml) {
                         $('#page-content-wrapper').html(templateHtml(data.getUserInfo[0]));
 
+                        $('#menu-partners').parent().removeClass('active');
+                        $('#menu-contacts').parent().removeClass('active');
                         $('#menu-profile').parent().addClass('active');
                         $('.dropdown-toggle').parent().removeClass('active');
                         $('ul.nav a[href=""]').parent().removeClass('active');
 
-                        templates.load('personal-info')
+                        data.getUserInfo[0].username = cookiesController.get('email');  
+                        data.getUserInfo[0].password = cookiesController.get('password');
+
+                        templates.load('profile-info')
                             .then(function (templateHtml) {
-                                $('#profile-content').html(templateHtml);
+                                $('#profile-content').html(templateHtml(data.getUserInfo[0]));
                             });
                     });
 

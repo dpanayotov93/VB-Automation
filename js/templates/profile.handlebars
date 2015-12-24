@@ -5,16 +5,16 @@
                 <!-- SIDEBAR USER TITLE -->
                 <div class="profile-usertitle">
                     <div class="profile-usertitle-name">
-                        Jane Bishop
+                        {{fname}} {{lname}}
                     </div>
                     <div class="profile-usertitle-job">
-                        Company
+                        {{firm}}
                     </div>
                 </div>
                 <!-- END SIDEBAR USER TITLE -->
                 <!-- SIDEBAR BUTTONS -->
                 <div class="profile-userbuttons">
-                    <button type="button" class="btn btn-danger btn-sm">Logout</button>
+                    <button onclick="userController.signOut()" type="button" class="btn btn-danger btn-sm">Logout</button>
                 </div>
                 <!-- END SIDEBAR BUTTONS -->
                 <!-- SIDEBAR MENU -->
