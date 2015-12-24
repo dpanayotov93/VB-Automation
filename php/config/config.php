@@ -43,7 +43,7 @@ function debugMessages($msg, $type) {
 }
 
 function makeStatusMessage($id, $type, $message) {
-	$sm = array ('id' => $id,"type" => $type, "message" => $message);
+	$sm = array ("type" => $type, "message" => $message);
 	return $sm;
 }
 
