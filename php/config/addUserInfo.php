@@ -40,7 +40,7 @@
 	if (is_null($row['iid'])) {
 		$insQ = new insertSQL($conn);
 		$insQ->insertData = array();
-		$insQ->cols = array("fname","lname","firm","address","city","country","phone");
+		$insQ->cols = array("fname","lname","firm","address","city","country","email","phone");
 		foreach ($insQ->cols as $c)
 			if (isset($_POST[$c]) && !empty(($_POST[$c])))
 				$insQ->insertData[] = $conn->real_escape_string($_POST[$c]);
@@ -57,7 +57,7 @@
 	} else  {
 		$updQ = new updateSQL($conn);
 		$updQ->update = "";
-		$columns = array("fname","lname","firm","address","city","country","phone");
+		$columns = array("fname","lname","firm","address","city","country","email","phone");
 		foreach ($columns as $c)
 			if (isset($_POST[$c])) 
 				$updQ->update .= $c."='". $conn->real_escape_string($_POST[$c])."',";

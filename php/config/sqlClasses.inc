@@ -57,10 +57,10 @@ class selectSQL extends  basicSQL {
 	var $select, $distinct, $tableNames, $joinTypes, $joins, $where, $having, $order;
 	
 	function checkParameters() {
-		//if (empty($this->select) OR empty($this->tableNames))
-		//	return false;
-		//if (!empty($this->joins) AND ((count($this->tableNames) != count($this->joins) + 1 OR count($this->joins) != count($this->joinTypes))))
-		//	return false;
+		if (empty($this->select) OR empty($this->tableNames))
+			return false;
+		if (!empty($this->joins) AND ((count($this->tableNames) != count($this->joins) + 1 OR count($this->joins) != count($this->joinTypes))))
+			return false;
 		return true;
 	}
 	
