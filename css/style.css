@@ -356,3 +356,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td:first-child::before, tabl
 .contact-container {
     margin-left: 15%;
 }
+
+.modal-body, .modal-header {
+    z-index: 100;
+}

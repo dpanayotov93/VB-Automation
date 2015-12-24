@@ -1,14 +1,14 @@
 var cart = [];
+var filters = [];
 var productsController = {
     get: function(id) {
-        // window.history.pushState('products', 'Products', '/#/products');
+        var tempId = 7;
 
         $('.dropdown-toggle').parent().addClass('active');
         $('#menu-profile').parent().removeClass('active');
         $('ul.nav a[href=""]').parent().removeClass('active');
 
         console.log(id);
-        var tempId = 7;
 
         $.ajax({
             type: "POST",
@@ -20,9 +20,9 @@ var productsController = {
                 templates.load('products')
                     .then(function(templateHtml) {
                         $('#page-content-wrapper').html(templateHtml(data.selectCat));
-                            $('#products-table').dataTable({
-                                responsive: true
-                            });
+                        $('#products-table').dataTable({
+                            responsive: true
+                        });
                     });
 
             },
@@ -45,12 +45,53 @@ var productsController = {
             beforeSend:function(){
                  console.log('Getting Products Categories...');
             }
-        });
+        }); 
     },
-    filter: function(filter) {
-        // TODO: IMPLEMENT
+    compare: function() {
+        console.log('chechbox init');
+            var totalItemsChecked = $('.checkbox-primary:checked').size();
+            if (totalItemsChecked === 2) {
+                console.log('Compare '+ totalItemsChecked + '!');
+                $('input.checkbox-primary:not(:checked)').attr('disabled', 'disabled');
+                $('#myModal').modal('show');
+            } else if (totalItemsChecked > 2) {
+                console.log('Compare ' + totalItemsChecked + '!');
+                $('input.checkbox-primary:not(:checked)').attr('disabled', 'disabled');
+            } else {
+                $('input.checkbox-primary').removeAttr('disabled');
+            }
+    },
+    filter: function (filter) {
+        var tempId = 7;
         console.log('Filtering ' + filter + ' ...');
-        productsController.get;
+
+        filters.push(filter);
+
+        console.log(filters);
+
+        $.ajax({
+            type: "POST",
+            url: "../emag/php/handle.php",
+            dataType: 'json',
+            data: { q: "selectCat", id: tempId, filters: filters },
+            success: function (data) {
+                console.log(data.selectCat);
+                templates.load('products')
+                    .then(function (templateHtml) {
+                        $('#page-content-wrapper').html(templateHtml(data.selectCat));
+                        $('#products-table').dataTable({
+                            responsive: true
+                        });
+                    });
+
+            },
+            error: function (data) {
+                console.log(data);
+            },
+            beforeSend: function () {
+                console.log('Getting Filtered Products Categories...');
+            }
+        });
     },
     addToCart: function(name) {
         cart.push(name);
