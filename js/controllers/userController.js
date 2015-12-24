@@ -1,3 +1,4 @@
+/* global testData */
 /* global cookiesController */
 var userData = {};
 var userController = {
@@ -57,7 +58,7 @@ var userController = {
         });
     },
     signIn: function() {
-            var email = document.getElementById("email1").value;
+            var email = document.getElementById("email1").value,
             password = document.getElementById('exampleInputPassword1').value;
 
             $.ajax({
@@ -78,6 +79,11 @@ var userController = {
                       $('#menu-profile')[0].style.display = 'inline-block';
                       $('#menu-login').hide();
                       $('#menu-admin')[0].style.display = 'none';
+                      
+                      if(data.signin[0].access === '3') {
+                          console.log('Welcome Admin!');
+                          $('#menu-admin')[0].style.display = 'inline-block';
+                      }
                   }
               }
             });
@@ -120,11 +126,14 @@ var userController = {
                     document.cookie = cookieUserId;
                     
                     
-                    console.log('id ' + userData.id);
                     $('#addListItem').modal('hide');
                     $('#menu-profile')[0].style.display = 'inline-block';
                     $('#menu-login').hide();
                     $('#menu-admin')[0].style.display = 'none';
+                    if(data.signin[0].access === '3') {
+                        console.log('Welcome Admin!');
+                        $('#menu-admin')[0].style.display = 'inline-block';
+                    }
                 }
             }
         });
