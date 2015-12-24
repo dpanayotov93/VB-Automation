@@ -35,11 +35,12 @@
 	$insSQL->cols = array("user", "password", "access");
 	$insSQL->tableName = "users";
 	
-	if ($insSQL->executeQuery())
-		$statusMessage = makeStatusMessage(4,"success","Registration successfull!");
-	else
+	if (!$insSQL->executeQuery()) {
 		$statusMessage = $insSQL->status;
+		mysqli_close($conn);
+		return;
+	}
 	
-	mysqli_close($conn);
-	return;
+	include_once 'signin.php';
+	
 ?>
