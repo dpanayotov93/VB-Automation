@@ -4,8 +4,8 @@
 		return;
 	}
 
-	$result = getLanguages($conn);
-	if (is_null($result)) {
+	$langResult = getLanguages($conn);
+	if (is_null($langResult)) {
 		$statusMessage = makeStatusMessage(324, "error", "Could not get language information.");
 		mysqli_close($conn);
 		return;
@@ -25,7 +25,7 @@
 	} elseif (isset($_POST['name']) && isset($_POST['names']) && isset($_POST['desc']))
 		insCat($conn);
 	elseif (isset($_POST['showProps'])) 
-		getCats($conn);
+		getCats();
 	else 
 		getCatFields($conn);
 		
@@ -46,7 +46,7 @@
 		$statusMessage = makeStatusMessage(-1, "shiiit", "Not done yet.");
 	}
 	
-	function getCats($conn) {
+	function getCats() {
 		include_once 'categories.php';
 	}
 	
@@ -54,7 +54,7 @@
 		$insQ = new insertSQL($conn);
 		$insQ->insertData = array();
 		$insQ->cols = array();
-		while ($row = $result->fetch_assoc()) {
+		while ($row = $GLOBALS(langResult)->fetch_assoc()) {
 			if (isset($_POST['names'][$row['abreviation']])) {
 				$insQ->insertData[] = $_POST['names'][$row['abreviation']];
 				$insQ->cols[] = "name".$row['abreviation'];
@@ -83,7 +83,7 @@
 		
 		$selQ = new selectSQL($conn);
 		$selQ->where = "";
-		while ($row = $result->fetch_assoc()) 
+		while ($row = $GLOBALS(langResult)->fetch_assoc()) 
 			if (isset($_POST['names'][$row['abreviation']]))
 				$selQ->where = "name".$row['abreviation']." = '".$conn->real_escape_string($_POST['names'][$row['abreviation']])."' OR ";
 			

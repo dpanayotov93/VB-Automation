@@ -91,12 +91,15 @@
 		} else 
 			$dataF[] = array("name" => $p, $p => array($_POST['filters'][$p]));
 	}
-	
-	$selQ->select = $propNames;
+
+	$selQ->distinct = false;
+	$selQ->select = array("name");
 	$selQ->select[] = "imgurl as Image";
+	$selQ->select = array_merge($selQ->select,$propNames);
+	$selQ->select[] = "price";
 	$selQ->tableNames = array ("products_".$id);
 	if (!$selQ->executeQuery()){
-		$statusMessage = $selQ->statusl;
+		$statusMessage = $selQ->status;
 		mysqli_close($conn);
 		return;
 	}
