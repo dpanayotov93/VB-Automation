@@ -21,6 +21,10 @@ function getCat($where) {
 	$selQ->select = array ("id","parentid","name".$GLOBALS['language'],"desc".$GLOBALS['language'],"imgurl");
 	$selQ->tableNames = array("categories");
 	$selQ->where = $where;
+	if(isset($_POST['deleted']))
+		$selQ .= " AND visible = 0";
+	else
+		$selQ .= " AND visible = 1";
 	if (!$selQ->executeQuery()) 
 		return;
 	if ($selQ->getNumberOfResults() > 0) {

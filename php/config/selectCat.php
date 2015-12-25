@@ -15,7 +15,7 @@
 	$selQ = new selectSQL($conn);
 	$selQ->select = array("id");
 	$selQ->tableNames = array ("categories");
-	$selQ->where = "id = '".$id."'";
+	$selQ->where = "id = '".$id."' AND visible = 1";
 	
 	if (!$selQ->executeQuery()) {
 		$statusMessage = $selQ->status;

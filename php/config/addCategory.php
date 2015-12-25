@@ -1,8 +1,4 @@
 <?php
-	if (!isset($_POST["names"]) || !isset($_POST["fid"])) {
-		$statusMessage = makeStatusMessage(2,"error","Incomplete query request...");
-		return;
-	}
 
 	$langResult = getLanguages($conn);
 	if (is_null($langResult)) {
@@ -22,28 +18,64 @@
 			delCat($conn,0);
 		else
 			updCat($conn);
-	} elseif (isset($_POST['name']) && isset($_POST['names']) && isset($_POST['desc']))
+	} elseif (isset($_POST['names']) && isset($_POST['desc']))
 		insCat($conn);
-	elseif (isset($_POST['showProps'])) 
+	elseif (isset($_POST['showCats'])) 
 		getCats();
 	else 
 		getCatFields($conn);
 		
-
 	mysqli_close($conn);
 	return;
 		
+	function delCat($conn,$del) {
+		$updQ = new updateSQL($conn);
+		$updQ->tableName = array ("categories");
+		$updQ->where = "id = '".$conn->real_escape_string($_POST['id'])."'";
+		if ($del)
+			$updQ->update = "visible = 0";
+		else 
+			$updQ->update = "visible = 1";
 
-	function delCat($conn) {
-		$statusMessage = makeStatusMessage(-1, "shiiit", "Not done yet.");
+		if (!$updQ->executeQuery())
+			$statusMessage = $updQ->sqlQuery;
+		else
+			$statusMessage = makeStatusMessage(1234, "suscces", "Category deleted successfully.");
 	}
 	
 	function updCat($conn) {
-		$statusMessage = makeStatusMessage(-1, "shiiit", "Not done yet.");
+		$id = $conn->real_escape_string($_POST['id']);
+		$updQ = new updateSQL($conn);
+		$updQ->update = "";
+		$updQ->tableName = array ("categories");
+		$updQ->where = "id = '".$id."'";
+		while ($row = $langArray->fetch_assoc()) {
+			if (isset($_POST['names'][$row['abreviation']])) 
+				$updQ->update .= "name".$row['abreviation']." = '".$conn->real_escape_string($_POST['names'][$row['abreviation']]."',");
+			if (isset($_POST['desc'][$row['abreviation']])) 
+				$updQ->update .= "desc".$row['abreviation']." = '".$conn->real_escape_string($_POST['desc'][$row['abreviation']])."',";
+		}
+		if (isset($_POST['parentid']))
+			$updQ->update .= "parentid = '".$conn->real_escape_string($_POST['parentid'])."',";
+		if (isset($_POST['imgurl']))
+			$updQ->update .= "imgurl = '".$conn->real_escape_string($_POST['imgurl'])."'";
+		else
+			$updQ->update = substr($updQ->update, 0, -1);
+	
+		if (!$updQ->executeQuery())
+			$statusMessage = $updQ->status;
+		else
+			$statusMessage = makeStatusMessage(1234, "suscces", "Category updated successfully.");
 	}
 	
 	function getCatFields($conn) {
-		$statusMessage = makeStatusMessage(-1, "shiiit", "Not done yet.");
+		$data = array("Parent id" => "parentid");
+		while($row = $GLOBALS['langResult']->fetch_assoc()) {
+			$data[] = array("Name ".$row["abreviation"] => "name".$row["abreviation"]);
+			$data[] = array("Discription ".$row["abreviation"] => "desc".$row["abreviation"]);
+		}
+		$data[] = array("Link to image" => "imgurl");
+		$statusMessage = makeStatusMessage(12342, "success", "Info sent!");
 	}
 	
 	function getCats() {
@@ -81,24 +113,24 @@
 			return;
 		}
 		
-		$selQ = new selectSQL($conn);
-		$selQ->where = "";
+		$selQid = new selectSQL($conn);
+		$selQid->where = "";
 		while ($row = $GLOBALS(langResult)->fetch_assoc()) 
 			if (isset($_POST['names'][$row['abreviation']]))
-				$selQ->where = "name".$row['abreviation']." = '".$conn->real_escape_string($_POST['names'][$row['abreviation']])."' OR ";
+				$selQid->where = "name".$row['abreviation']." = '".$conn->real_escape_string($_POST['names'][$row['abreviation']])."' OR ";
 			
-		$selQ->where = substr($selQ->where, 0, -4);
-		$selQ->order = "id DESC";
-		$selQ->tableNames = array("categories");
-		$selQ->select = array("id");
+		$selQid->where = substr($selQid->where, 0, -4);
+		$selQid->order = "id DESC";
+		$selQid->tableNames = array("categories");
+		$selQid->select = array("id");
 		
-		if (!$selQ->executeQuery()) {
-			$statusMessage = $selQ->status;
+		if (!$selQid->executeQuery()) {
+			$statusMessage = $selQid->status;
 			mysqli_close($conn);
 			return;
 		}
 		    
-		$row = $selQ->result->fetch_assoc();
+		$row = $selQid->result->fetch_assoc();
 		$catid = $row['id'];
 	
 		$selQ = new selectSQL($conn);
@@ -121,7 +153,7 @@
 		$ctQ->cols = array();
 		$ctQ->colTypes = array();
 		$ctQ->name = "products_". $catid;
-		while ($row = $ctQ->result->fetch_assoc()) {
+		while ($row = $selQ->result->fetch_assoc()) {
 			$$ctQ->cols[] = $row['name'];
 			$ctQ->colTypes[] = "varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL";
 		}
@@ -140,7 +172,7 @@
 				$resultAddProps = true; 
 		}
 		
-		if (!$resultAddProps)
+		if (isset($resultAddProps))
 			$statusMessage = makeStatusMessage(3,"error","Could not assign properties to category.");
 		else
 			$statusMessage = makeStatusMessage(21,"success","Category successfully added!");
