@@ -93,10 +93,10 @@
 	}
 
 	$selQ->distinct = false;
-	$selQ->select = array("name");
-	$selQ->select[] = "imgurl as Image";
-	$selQ->select = array_merge($selQ->select,$propNames);
+	$selQ->select = array("imgurl as Image");
+	$selQ->select[] = "name";
 	$selQ->select[] = "price";
+	$selQ->select = array_merge($selQ->select,$propNames);
 	$selQ->tableNames = array ("products_".$id);
 	if (!$selQ->executeQuery()){
 		$statusMessage = $selQ->status;

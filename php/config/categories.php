@@ -22,9 +22,9 @@ function getCat($where) {
 	$selQ->tableNames = array("categories");
 	$selQ->where = $where;
 	if(isset($_POST['deleted']))
-		$selQ .= " AND visible = 0";
+		$selQ->where .= " AND visible = 0";
 	else
-		$selQ .= " AND visible = 1";
+		$selQ->where .= " AND visible = 1";
 	if (!$selQ->executeQuery()) 
 		return;
 	if ($selQ->getNumberOfResults() > 0) {

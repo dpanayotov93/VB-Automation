@@ -4,7 +4,14 @@ $debugSQL = false;
 if (isset($_GET["debug"]) OR isset($_POST["debug"]))
 	$debugSQL = True;
 
+
+	iconv_set_encoding("internal_encoding", "UTF-8");
+	iconv_set_encoding("output_encoding", "UTF-8");
+	iconv_set_encoding("input_encoding", "UTF-8");
+	
+	
 include "sqlClasses.inc";
+
 
 function sqlConnectDefault() {
 	$servername = "localhost";
@@ -13,6 +20,7 @@ function sqlConnectDefault() {
 	$dbname = "emag";
 
 	$conn = new mysqli($servername, $username, $password, $dbname);
+	$conn->set_charset("utf8");
 	if (checkConnection($conn))
 		return $conn;
 	else 
