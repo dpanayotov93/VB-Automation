@@ -7,7 +7,15 @@
 		return;
 	}
 
-	$data = getCat("parentid IS NULL");
+	if (isset($_POST['catid']))
+		$where = "id = '".$conn->real_escape_string($_POST['catid'])."'";
+	elseif (isset($catid))
+		$where = "id = '".$catid."'";
+	else 
+		$where = "parentid IS NULL";
+	
+	$data = getCat($where,$conn,$language);
+	
 	if (empty($data))
 		$statusMessage = makeStatusMessage(23, "error", "No categories found.");
 	else
@@ -16,9 +24,9 @@
 	mysqli_close($conn);
 	return;
 	
-function getCat($where) {
-	$selQ = new selectSQL($GLOBALS['conn']);
-	$selQ->select = array ("id","parentid","name".$GLOBALS['language'],"desc".$GLOBALS['language'],"imgurl");
+function getCat($where, $conn,$lang) {
+	$selQ = new selectSQL($conn);
+	$selQ->select = array ("id","parentid","name".$lang,"desc".$lang,"imgurl");
 	$selQ->tableNames = array("categories");
 	$selQ->where = $where;
 	if(isset($_POST['deleted']))
@@ -29,7 +37,7 @@ function getCat($where) {
 		return;
 	if ($selQ->getNumberOfResults() > 0) {
 		while ($row = $selQ->result->fetch_assoc()) {
-			$subCats = getCat("parentid = '".$row['id']."'");
+			$subCats = getCat("parentid = '".$row['id']."'",$conn,$lang);
 			if ($subCats)
 				$data[] = array_merge($row, array("subCategories" => $subCats));
 			else 
