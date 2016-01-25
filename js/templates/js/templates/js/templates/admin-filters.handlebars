@@ -1,0 +1,18 @@
+<button onclick="adminController.createFilter()">ADD NEW FILTER</button>
+
+<h2>New Filter: </h2>
+<table class="table">
+    {{#each input}}
+        <tr>
+            <td>{{@key}}:</td>
+            <td><textarea id="{{this}}"></textarea></td>
+        </tr> 
+    {{/each}}
+    {{#each checkbox}}
+        <tr>
+            <td>{{@key}}:</td>
+            <td><input id="{{this}}" type="checkbox"></td>
+        </tr>
+    {{/each}}
+</table>
+<button onclick="adminController.createFilter()">CREATE FILTER</button>

@@ -1,0 +1,107 @@
+<div class="jumbotron">
+  <h2>Filters</h2>
+  <div class="table-responsive">
+      <table id="filters-table" class="table dataTable table-responsive table-hover">
+          <thead>
+              {{#each filters}}
+                {{#if @first}}
+                    {{#each this}}
+                        <th>
+
+                        </th>
+                        {{#each this}}
+                          <th>
+
+                          </th>
+                        {{/each}}
+                    {{/each}}
+                {{/if}}
+              {{/each}}
+          </thead>
+          <tbody>
+              {{#each filters}}
+              <tr>
+                      {{#each this}}
+                          {{#if @first}}
+                              <td class="info">
+                                {{this}}
+                              </td>
+                          {{/if}}
+                          <!-- {{#each this}} -->
+                              <td>
+                                  <a onclick="productsController.filter('{{this}}', '{{../../this.name}}')">
+                                      {{this}}
+                                  </a>
+                              </td>
+                          <!-- {{/each}} -->
+                      {{/each}}
+              </tr>
+              {{/each}}
+          <tbody>
+      </table>
+</div>
+
+  <h1>Products</h1>
+
+  <table id="products-table" class="table table-responsive table-hover">
+      <thead class="thead-inverse">
+          <tr>
+              <th>
+                  
+              </th>
+              <th>
+                  Purchase
+              </th>
+              <th>
+                  Compare
+              </th>              
+                {{#each products}}
+                    {{#if @first}}
+                        {{#each this}}
+                            <th>
+                                {{@key}}
+                            </th>
+                        {{/each}}
+                    {{/if}}
+                {{/each}}
+          </tr>
+      </thead>
+      <tbody>
+          {{#each products}}
+              <tr>   
+                  <td>
+                      
+                  </td>               
+                  <td>
+                      <button onclick="productsController.addToCart('{{this.system}}')" type="button" class="btn-block">ADD</button>
+                  </td>
+                  <td>
+                      <input type="checkbox" onchange="productsController.compare('{{this.system}}')" class="checkbox-primary" value="">
+                  </td>                
+                  {{#each this}}
+                        <td>
+                            {{this}} 
+                        </td>
+                  {{/each}}
+              </tr>
+          {{/each}}
+    </tbody>
+  </table>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="modal" class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                <h3 id="myModalLabel">Compare</h3>
+            </div>
+            <div class="modal-body">
+                <p>One fine body!</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
