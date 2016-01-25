@@ -1,0 +1,16 @@
+<h2>New Filter: </h2>
+<table class="table">
+    {{#each input}}
+        <tr>
+            <td>{{@key}}:</td>
+            <td><textareacols="30" rows="10"></textarea>></td>
+        </tr> 
+    {{/each}}
+    {{#each checkbox}}
+        <tr>
+            <td>{{@key}}:</td>
+            <td><input type="checkbox"></td>
+        </tr>
+    {{/each}}
+</table>
+<button>CREATE FILTER</button>

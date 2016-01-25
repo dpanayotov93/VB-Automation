@@ -71,7 +71,7 @@ var userController = {
                   var statusMessage = data.status.type;
                   console.log(data);
                   if (statusMessage === 'success') {
-                      console.log(); 
+                      console.log();
                       cookiesController.set(email, password);
 
                       userData.id = data.signin.id;
@@ -80,11 +80,13 @@ var userController = {
                       $('#menu-profile')[0].style.display = 'inline-block';
                       $('#menu-login').hide();
                       $('#menu-admin')[0].style.display = 'none';
-                      
+
                       if(data.signin[0].access === '3') {
                           console.log('Welcome Admin!');
                           $('#menu-admin')[0].style.display = 'inline-block';
                       }
+
+                      toastr.success('Have fun storming the castle!', 'Miracle Max Says');
                   }
               }
             });
@@ -115,18 +117,18 @@ var userController = {
                 var statusMessage = data.status.type,
                     date = new Date(),
                     cookieUserId;
-                    
+
                 console.log(data);
                 if (statusMessage === 'success') {
                     console.log(statusMessage);
-                    
+
                     userData.id = data.signin[0].id;
-                    
+
                     date.setTime(date.getTime()+(7*24*60*60*1000));
                     cookieUserId = "userId=" + data.signin[0].id + '; expires=' + date;
                     document.cookie = cookieUserId;
-                    
-                    
+
+
                     $('#addListItem').modal('hide');
                     $('#menu-profile')[0].style.display = 'inline-block';
                     $('#menu-login').hide();
@@ -206,7 +208,7 @@ var userController = {
                         $('.dropdown-toggle').parent().removeClass('active');
                         $('ul.nav a[href=""]').parent().removeClass('active');
 
-                        data.getUserInfo[0].username = cookiesController.get('email');  
+                        data.getUserInfo[0].username = cookiesController.get('email');
                         data.getUserInfo[0].password = cookiesController.get('password');
 
                         templates.load('profile-info')

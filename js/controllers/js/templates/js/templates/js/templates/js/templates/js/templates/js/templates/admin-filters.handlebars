@@ -1,0 +1,10 @@
+<table>
+    {{#each this}}
+        {{#unless @first}}
+            <tr>
+                <td>{{@key}}:</td>
+                <td><input type="text"></td>
+            </tr> 
+        {{/unless}}
+    {{/each}}
+</table>

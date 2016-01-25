@@ -1,0 +1,22 @@
+<h2>ALL FILTERS:</h2>
+<table class="table">
+    <thead>
+        {{this}}
+        {{#each this}}
+            {{#if @first}}
+                {{#each this}}
+                    <th>{{this}}</th>
+                {{/each}}
+            {{/if}}
+        {{/each}}
+    </thead>
+    <tbody>
+        {{#each this}}
+            <tr>
+                {{#each this}}
+                    <td>{{this}}</td>
+                {{/each}}
+            </tr>
+        {{/each}}
+    </tbody>
+</table>

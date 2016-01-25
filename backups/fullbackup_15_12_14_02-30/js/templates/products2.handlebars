@@ -1,0 +1,31 @@
+<div id="products-list">
+    <div id="compare-panel">
+
+    </div>
+    <table id="products-table">
+      <thead>
+          {{#each products}}
+              {{#if @first}}
+                  {{#each this}}
+                      {{#if @last}}
+                          <th>{{@key}}</th>
+                      {{/if}}
+                  {{/each}}
+              {{/if}}
+          {{/each}}
+        {{#each products}}
+            {{#if @first}}
+                {{#each this}}
+                    {{#unless @last}}
+                        <th>{{@key}}</th>
+                    {{/unless}}
+                {{/each}}
+            {{/if}}
+        {{/each}}
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <!-- <button onclick="userController.addToCart('{{this.system}}')" type="button" id="add-to-cart">Add</button>
+    <button onclick="productsController.compare()" type="button" id="compare-product">Compare</button> -->
+</div>
