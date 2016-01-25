@@ -85,7 +85,7 @@ var userController = {
                           console.log('Welcome Admin!');
                           $('#menu-admin')[0].style.display = 'inline-block';
                       }
-                      alert();
+                      console.log('TOASTR TEST');
                       toastr.success('Have fun storming the castle!', 'Miracle Max Says');
                   }
               }
