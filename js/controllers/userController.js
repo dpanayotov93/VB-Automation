@@ -29,6 +29,7 @@ var userController = {
                 dataType: "json",
                 success: function (data) {
                     console.log(data);
+                    toastr.success('SUCCESSFUL!', 'SIGN UP');
                 },
                 error: function(data) {
                     console.log(data);
@@ -85,8 +86,7 @@ var userController = {
                           console.log('Welcome Admin!');
                           $('#menu-admin')[0].style.display = 'inline-block';
                       }
-                      console.log('TOASTR TEST');
-                      toastr.success('Have fun storming the castle!', 'Miracle Max Says');
+                      toastr.success('SUCCESSFUL!', 'LOG IN');
                   }
               }
             });
@@ -100,6 +100,7 @@ var userController = {
         cookiesController.del('password');
         cookiesController.del('userId');
         window.location.href = "http://78.90.40.202/emag/";
+        toastr.success('SUCCESSFUL!', 'SIGN OUT');
     },
     addToCart: function(name) {
         testData.cart.push(name);
