@@ -47,14 +47,14 @@
       <thead class="thead-inverse">
           <tr>
               <th>
-                  
+
               </th>
               <th>
                   Purchase
               </th>
               <th>
                   Compare
-              </th>              
+              </th>
                 {{#each products}}
                     {{#if @first}}
                         {{#each this}}
@@ -68,20 +68,26 @@
       </thead>
       <tbody>
           {{#each products}}
-              <tr>   
+              <tr>
                   <td>
-                      
-                  </td>               
+
+                  </td>
                   <td>
                       <button onclick="productsController.addToCart('{{this.system}}')" type="button" class="btn-block">ADD</button>
                   </td>
                   <td>
                       <input type="checkbox" onchange="productsController.compare('{{this.system}}')" class="checkbox-primary" value="">
-                  </td>                
+                  </td>
                   {{#each this}}
+                    {{#if @first}}
+                    <td>
+                        <img src="{{this}}" alt="" /> 
+                    </td>
+                    {{else}}
                         <td>
-                            {{this}} 
+                            {{this}}
                         </td>
+                    {{/if}}
                   {{/each}}
               </tr>
           {{/each}}

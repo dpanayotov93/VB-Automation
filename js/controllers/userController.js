@@ -99,8 +99,8 @@ var userController = {
         cookiesController.del('email');
         cookiesController.del('password');
         cookiesController.del('userId');
-        window.location.href = "http://78.90.40.202/emag/";
         toastr.success('SUCCESSFUL!', 'SIGN OUT');
+        window.location.href = "http://78.90.40.202/emag/";
     },
     addToCart: function(name) {
         testData.cart.push(name);
