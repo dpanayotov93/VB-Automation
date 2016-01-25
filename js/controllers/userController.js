@@ -1,3 +1,4 @@
+/* global templates */
 /* global testData */
 /* global cookiesController */
 var userData = {};

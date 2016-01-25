@@ -29,7 +29,7 @@
                           {{/if}}
                           <!-- {{#each this}} -->
                               <td>
-                                  <a onclick="productsController.filter('{{this}}')">
+                                  <a onclick="productsController.filter('{{this}}', '{{../../this.name}}')">
                                       {{this}}
                                   </a>
                               </td>
@@ -46,6 +46,9 @@
   <table id="products-table" class="table table-responsive table-hover">
       <thead class="thead-inverse">
           <tr>
+              <th>
+                  
+              </th>
               <th>
                   Purchase
               </th>
@@ -65,7 +68,10 @@
       </thead>
       <tbody>
           {{#each products}}
-              <tr>                  
+              <tr>   
+                  <td>
+                      
+                  </td>               
                   <td>
                       <button onclick="productsController.addToCart('{{this.system}}')" type="button" class="btn-block">ADD</button>
                   </td>
@@ -73,18 +79,9 @@
                       <input type="checkbox" onchange="productsController.compare('{{this.system}}')" class="checkbox-primary" value="">
                   </td>                
                   {{#each this}}
-                      {{#if @last}}
                         <td>
-                            <img class="img-responsive img-responsive-2" src="{{this}}"/>
+                            {{this}} 
                         </td>
-                      {{/if}}
-                  {{/each}}
-                  {{#each this}}
-                    {{#unless @last}}
-                        <td>
-                            {{this}}
-                        </td>
-                    {{/unless}}
                   {{/each}}
               </tr>
           {{/each}}
