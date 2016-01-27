@@ -29,7 +29,7 @@ var userController = {
                 dataType: "json",
                 success: function (data) {
                     console.log(data);
-                    toastr.success('SUCCESSFUL!', 'SIGN UP');
+                    toastr.success('Complete', 'SIGN UP');
                 },
                 error: function(data) {
                     console.log(data);
@@ -86,24 +86,24 @@ var userController = {
                           console.log('Welcome Admin!');
                           $('#menu-admin')[0].style.display = 'inline-block';
                       }
-                      toastr.success('SUCCESSFUL!', 'LOG IN');
+                      toastr.success('You have logged in successfuly.', 'WELCOME!');
                   }
               }
             });
     },
     signOut: function() {
-        console.log('Signing out...');
+        toastr.success('SUCCESSFUL!', 'SIGN OUT');
         $('#menu-profile')[0].style.display = 'none';
         $('#menu-login').show();
         $('#menu-admin')[0].style.display = 'none';
         cookiesController.del('email');
         cookiesController.del('password');
         cookiesController.del('userId');
-        toastr.success('SUCCESSFUL!', 'SIGN OUT');
         window.location.href = "http://78.90.40.202/emag/";
     },
     addToCart: function(name) {
         testData.cart.push(name);
+        toastr.success('Added to your cart!', name);
     },
     keepSession: function() {
         var email = cookiesController.get('email'),
