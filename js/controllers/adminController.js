@@ -218,7 +218,7 @@ var adminController = {
             searchable = document.getElementById('searchable').checked,
             langDependant = document.getElementById('langDependant').checked;
 
-        console.log(name + " | " + namesBG + " | " + namesEn + " | " + descBG + " | " + descEN + " | " + searchable + " | " + langDependant);
+        console.log(name + "  | " + namesBG + " | " + namesEn + " | " + descBG + " | " + descEN + " | " + searchable + " | " + langDependant);
 
         $.ajax({
             type: "POST",
