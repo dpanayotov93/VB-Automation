@@ -237,7 +237,7 @@ var adminController = {
         });
     },
     createCategory: function() {
-        var parentid = document.getElementById('parentid').value,
+        var parentid = document.getElementById('parentid').value || 0,
             namesBG = document.getElementById('namesBG').value,
             namesEn = document.getElementById('namesEN').value,
             descBG = document.getElementById('descBG').value,
