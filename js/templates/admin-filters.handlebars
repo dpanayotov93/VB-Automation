@@ -1,6 +1,6 @@
 <div style="text-align: center">
     <button onclick="$('#create-filter-wrap').show(); $('#show-filters-wrap').hide();">ADD NEW FILTER</button>
-    <button onclick="$('#create-filter-wrap').hide(); $('#show-filters-wrap').show();">SHOW ALL FILTER</button>
+    <button id="admin-show-all-filters" onclick="$('#create-filter-wrap').hide(); $('#show-filters-wrap').show();">SHOW ALL FILTER</button>
 </div>
 
 <div class="row" id="create-filter-wrap"  style="display: none;">
@@ -10,7 +10,7 @@
             <tr>
                 <td>{{@key}}:</td>
                 <td><textarea id="{{this}}"></textarea></td>
-            </tr> 
+            </tr>
         {{/each}}
         {{#each checkbox}}
             <tr>

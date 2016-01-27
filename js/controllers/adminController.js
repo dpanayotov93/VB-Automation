@@ -227,6 +227,8 @@ var adminController = {
             data: { q:"addProperty", name:name, 'names[BG]':namesBG, 'names[EN]':namesEn, 'desc[BG]':descBG, 'desc[EN]':descEN, searchable:searchable, langDependant:langDependant},
             success: function(data) {
                 console.log(data);
+                document.getElementById('admin-tab-filters').click();
+                document.getElementById('admin-show-all-filters').click();
             },
             error: function(data) {
                 console.log(data);
@@ -261,7 +263,8 @@ var adminController = {
             data: { q:"addCategory", parentid:parentid, 'namesBG':namesBG, 'namesEN':namesEn, 'descBG':descBG, 'descEN':descEN, imgUrl:imgUrl, fid:fid},
             success: function(data) {
                 console.log(data);
-                document.getElementById('admin-show-all-filters').click();
+                document.getElementById('admin-tab-categories').click();
+                document.getElementById('admin-show-all-categories').click();
             },
             error: function(data) {
                 console.log(data);
