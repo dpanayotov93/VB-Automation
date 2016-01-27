@@ -228,7 +228,7 @@ var adminController = {
             success: function(data) {
                 console.log(data);
                 document.getElementById('admin-tab-filters').click();
-                document.getElementById('admin-show-all-filters').click();
+                //document.getElementById('admin-show-all-filters').click();
             },
             error: function(data) {
                 console.log(data);
@@ -264,7 +264,7 @@ var adminController = {
             success: function(data) {
                 console.log(data);
                 document.getElementById('admin-tab-categories').click();
-                document.getElementById('admin-show-all-categories').click();
+                //document.getElementById('admin-show-all-categories').click();
             },
             error: function(data) {
                 console.log(data);
