@@ -144,7 +144,7 @@ var adminController = {
                 console.log(data);
                 templates.load('admin-categories-list') //TODO
                     .then(function(templateHtml) {
-                        $('#show-categories-wrap').html(templateHtml(data.addProperty)); //TODO
+                        $('#show-categories-wrap').html(templateHtml(data.addCategory)); //TODO
                     });
 
             },
