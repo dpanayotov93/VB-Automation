@@ -14,7 +14,7 @@
 	else 
 		$where = "parentid IS NULL";
 	
-	$data = getCat($where,$conn,$language);
+	$data = getCat($where,$conn,$GLOBALS['language']);
 	
 	if (empty($data))
 		$statusMessage = makeStatusMessage(23, "error", "No categories found.");

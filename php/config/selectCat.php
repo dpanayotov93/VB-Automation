@@ -30,7 +30,7 @@
 	}
 
 	$selQ = new selectSQL($conn);
-	$selQ->select = array("props.name as n");
+	$selQ->select = array("props.name as n","props.name".$language." as lang");
 	$selQ->tableNames = array ("props_to_prods as ids", "properties as props");
 	$selQ->where = "ids.catid = '".$id."' AND props.searchable = '1'";
 	$selQ->joinTypes = array ("JOIN");
@@ -42,14 +42,15 @@
 		mysqli_close($coon);
 		return;
 	}
-	while ($row = $selQ->result->fetch_assoc())
+	$propNames = array();
+	$propLangName = array();
+	while ($row = $selQ->result->fetch_assoc()) {
 		$propNames[] = $row['n'];
-	
-	$selQ = new selectSQL($conn);
-	$selQ->tableNames = array ("products_".$id);
+		$propLangName[] = $row['lang'];
+	}	
 
-	$whereFilters = "";
-	if (isset($_POST['filters'])) {
+	$whereFilters = "visible = 1 AND ";
+	if (isset($_POST['filters'])) 
 		foreach ($_POST['filters'] as $key => $filter) {
 			$key = $conn->real_escape_string($key);
 			$filter = $conn->real_escape_string($filter);
@@ -57,19 +58,19 @@
 				$whereFilters .=  $key."='".$filter."' AND ";
 			}
 		}
-		$whereFilters = substr($whereFilters, 0, -5);
-	}
 	if (isset($_POST['searchFilter'])) {
-		if (!empty($whereFilters))
-			$whereFilters .= " AND ";
 		$whereFilters .= "(";
 		$searchFilter = $conn->real_escape_string($_POST['searchFilter']);
 		foreach ($propNames as $p)
 			$whereFilters .= $p ." LIKE '%".$searchFilter."%' OR ";
 		$whereFilters = substr($whereFilters, 0, -4);
 		$whereFilters .= ")";
-	}
-	
+	} else 
+		$whereFilters = substr($whereFilters, 0, -5);
+
+	$selQ = new selectSQL($conn);
+	$selQ->tableNames = array ("products as p","products_".$id." as nld","products_".$id."_".$language." as ld");
+	$selQ->joins = array("p.infoid = nld.id", "p.infoid = ld.infoid");
 	$selQ->where = $whereFilters;
 	
 	$dataF = array();
@@ -94,10 +95,15 @@
 
 	$selQ->distinct = false;
 	$selQ->select = array("imgurl as Image");
-	$selQ->select[] = "name";
+	$selQ->select[] = "name".$language;
 	$selQ->select[] = "price";
+	$cleanProps = array();
+	for ($i=0;$i<count($propNames);$i++) 
+		$cleanProps = $propNames." as ".$propLangName;
 	$selQ->select = array_merge($selQ->select,$propNames);
-	$selQ->tableNames = array ("products_".$id);
+	$selQ->tableNames = array ("products as p","products_".$id." as nld","products_".$id."_".$language." as ld");
+	$selQ->joins = array("p.infoid = nld.id", "p.infoid = ld.infoid");
+	$selQ->joinTypes = array("JOIN","JOIN");
 	if (!$selQ->executeQuery()){
 		$statusMessage = $selQ->status;
 		mysqli_close($conn);
