@@ -237,7 +237,7 @@ var adminController = {
         });
     },
     createCategory: function() {
-        var parentid = document.getElementById('parentid').value || 0,
+        var parentid = document.getElementById('parentid').value,
             namesBG = document.getElementById('namesBG').value,
             namesEn = document.getElementById('namesEN').value,
             descBG = document.getElementById('descBG').value,
@@ -258,7 +258,7 @@ var adminController = {
             type: "POST",
             url: "../emag/php/handle.php",
             dataType: 'json',
-            data: { q:"addCategory", parentid:parentid, 'namesBG':namesBG, 'namesEN':namesEn, 'descBG':descBG, 'descEN':descEN, imgUrl:imgUrl, fid:fid},
+            data: { q:"addCategory", 'namesBG':namesBG, 'namesEN':namesEn, 'descBG':descBG, 'descEN':descEN, imgUrl:imgUrl, fid:fid},
             success: function(data) {
                 console.log(data);
             },
