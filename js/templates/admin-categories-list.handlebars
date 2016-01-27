@@ -18,9 +18,11 @@
             {{#each this}}
                 <tr>
                     <td><button data-toggle="modal" data-target="#edit-category-modal" onclick="adminController.editCategory('{{this.id}}')">Edit</button></td>
-                    {{#each this}}
-                        <td>{{this}}</td>
-                    {{/each}}
+                    {{#unless subCategories}}
+                        {{#each this}}
+                            <td>{{this}}</td>
+                        {{/each}}
+                    {{/unless}}
                     <td><button onclick="adminController.deleteCategory('{{this.id}}')">x</button></td>
                 </tr>
             {{/each}}
