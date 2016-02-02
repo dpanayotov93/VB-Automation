@@ -1,0 +1,14 @@
+<table class="table">
+    <tr>
+        <td>ID:</td>
+        <td id="categoryId">{{this.id}}</td>
+    </tr>
+    {{#each this}}
+        {{#unless @last}}
+            <tr>
+                <td>{{@key}}:</td>
+                <td><textarea id="{{this}}">Enter new value</textarea></td>
+            </tr>
+        {{/unless}}
+    {{/each}}
+</table>

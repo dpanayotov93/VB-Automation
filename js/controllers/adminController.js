@@ -178,6 +178,29 @@ var adminController = {
             }
         });
     },
+    editCategory: function(id) {
+        $.ajax({
+            type: "POST",
+            url: "../emag/php/handle.php",
+            dataType: 'json',
+            data: { q:"addCategory" },
+            success: function(data) {
+                console.log(data);
+                data.addCategory.id = id;
+                templates.load('admin-category-edit')
+                    .then(function(templateHtml) {
+                       console.log("Data: " + data.addCategory);
+                       $('#edit-category-modal-body').html(templateHtml(data.addCategory));
+                    });
+            },
+            error: function(data) {
+                console.log(data);
+            },
+            beforeSend:function(){
+                console.log('editing ADMIN category...');
+            }
+        });
+    },
     sendEditedFilter: function() {
         var name = document.getElementById('name').value,
             namesBG = document.getElementById('names[BG]').value,
@@ -206,6 +229,24 @@ var adminController = {
             },
             beforeSend:function(){
                     console.log('deleting ADMIN filter...');
+            }
+        });
+    },
+    deleteCategory: function(id) {
+        $.ajax({
+            type: "POST",
+            url: "../emag/php/handle.php",
+            dataType: 'json',
+            data: { q:"addCategory", id:id, delete:1 },
+            success: function(data) {
+                console.log(data);
+                adminController.showCategories();
+            },
+            error: function(data) {
+                console.log(data);
+            },
+            beforeSend:function(){
+                console.log('deleting ADMIN category...');
             }
         });
     },
