@@ -1,6 +1,6 @@
 <div style="text-align: center">
-    <button onclick="$('#create-filter-wrap').show(); $('#show-filters-wrap').hide();">ADD NEW FILTER</button>
-    <button id="admin-show-all-filters" onclick="$('#create-filter-wrap').hide(); $('#show-filters-wrap').show();">SHOW ALL FILTER</button>
+    <button class="btn btn-primary" onclick="$('#create-filter-wrap').show(); $('#show-filters-wrap').hide();">ADD NEW FILTER</button>
+    <!-- <button class="btn btn-primary" id="admin-show-all-filters" onclick="$('#create-filter-wrap').hide(); $('#show-filters-wrap').show();">SHOW ALL FILTER</button> -->
 </div>
 
 <div class="row" id="create-filter-wrap"  style="display: none;">
@@ -22,6 +22,6 @@
     <button onclick="adminController.createFilter()">CREATE FILTER</button>
 </div>
 
-<div class="row" id="show-filters-wrap"  style="display: none;">
+<div class="row" id="show-filters-wrap">
 
 </div>

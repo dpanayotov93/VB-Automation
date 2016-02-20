@@ -5,8 +5,10 @@ var adminController = {
             .then(function (templateHtml) {
                 $('#page-content-wrapper').html(templateHtml());
 
+                $('#menu-admin').parent().addClass('active');
+
                 $('#menu-partners').parent().removeClass('active');
-                $('#menu-contacts').parent().addClass('active');
+                $('#menu-contacts').parent().removeClass('active');
                 $('#menu-profile').parent().removeClass('active');
                 $('.dropdown-toggle').parent().removeClass('active');
                 $('ul.nav a[href=""]').parent().removeClass('active');
@@ -57,6 +59,34 @@ var adminController = {
                  console.log('Getting ADMIN categories tab...');
             }
         });
+    },
+    tabProducts: function() {
+        $.ajax({
+            type: "POST",
+            url: "../emag/php/handle.php",
+            dataType: 'json',
+            data: { q:"addCategory", showCats:"1" },
+            success: function(data) {
+                console.log(data.addCategory);
+                templates.load('admin-products')
+                    .then(function(templateHtml) {
+                        $('#4').html(templateHtml(data.addCategory));
+                    });
+
+            },
+            error: function(data) {
+                console.log(data);
+            },
+            beforeSend:function(){
+                 console.log('Getting ADMIN products tab...');
+            }
+        });
+    },
+    tabStatistics: function() {
+        templates.load('admin-statistics')
+            .then(function(templateHtml) {
+                $('#0').html(templateHtml);
+            });
     },
     getAllFilterIds: function() {
         var listOfFilterIds = [];
@@ -156,6 +186,31 @@ var adminController = {
             }
         });
     },
+    showProducts: function() {
+         var selectCat = document.getElementById("selectedCategory");
+         var catid = selectCat.options[selectCat.selectedIndex].value;
+         console.log(catid);
+         $.ajax({
+            type: "POST",
+            url: "../emag/php/handle.php",
+            dataType: 'json',
+            data: { q:"addProduct", catid:catid, show:1},
+            success: function(data) {
+                console.log(data);
+                templates.load('admin-products-list') //TODO
+                    .then(function(templateHtml) {
+                        $('#show-products-wrap').html(templateHtml(data.addProduct)); //TODO
+                    });
+
+            },
+            error: function(data) {
+                console.log(data);
+            },
+            beforeSend:function(){
+                 console.log('Getting ADMIN filters...');
+            }
+        });
+    },
     editFilter: function(id) {
         $.ajax({
             type: "POST",
@@ -202,17 +257,79 @@ var adminController = {
         });
     },
     sendEditedFilter: function() {
-        var name = document.getElementById('name').value,
-            namesBG = document.getElementById('names[BG]').value,
-            namesEn = document.getElementById('names[EN]').value,
-            descBG = document.getElementById('desc[BG]').value,
-            descEN = document.getElementById('desc[EN]').value,
-            searchable = document.getElementById('searchable').checked,
-            langDependant = document.getElementById('langDependant').checked,
-            id = document.getElementById('filterId').innerHTML;
+        var searchable = document.getElementById('searchable').checked;
+        var langDependant = document.getElementById('langDependant').checked;
+        var id = document.getElementById('filterId').innerHTML;
 
-        console.log(id + " | " + name + " | " + namesBG + " | " + namesEn + " | " + descBG + " | " + descEN + " | " + searchable + " | " + langDependant);
+        if (langDependant) {
+            var data = {
+                q: "addProperty",
+                id: id,
+                searchable: searchable,
+            }
+        }
+        else {
+            var data = {
+                q: "addProperty",
+                id: id,
+                searchable: searchable,
+                langDependant: langDependant
+            }
+        }
 
+        $("textarea").each(function(){
+            data[this.id] = this.value;
+        });
+
+        console.log(data);
+
+        $.ajax({
+            type: "POST",
+            url: "../emag/php/handle.php",
+            dataType: 'json',
+            data: data,
+            success: function(data) {
+                console.log(data);
+                document.getElementById('admin-tab-filters').click();
+            },
+            error: function(data) {
+                console.log(data);
+            },
+            beforeSend:function(){
+                 console.log('Editing category...');
+            }
+        });
+    },
+    sendEditedCategories: function() {
+        var id =  document.getElementById('categoryId').innerHTML;
+        var data = {
+            q: "addCategory",
+            id: id
+        }
+
+        $("textarea").each(function(){
+            data[this.id] = this.value;
+        });
+
+        console.log(data);
+
+        $.ajax({
+            type: "POST",
+            url: "../emag/php/handle.php",
+            dataType: 'json',
+            data: data,
+            success: function(data) {
+                console.log(data);
+                document.getElementById('admin-tab-categories').click();
+                //document.getElementById('admin-show-all-categories').click();
+            },
+            error: function(data) {
+                console.log(data);
+            },
+            beforeSend:function(){
+                 console.log('Editing category...');
+            }
+        });
     },
     deleteFilter: function(id) {
         $.ajax({
@@ -250,22 +367,53 @@ var adminController = {
             }
         });
     },
+    deleteProduct: function(id) {
+        $.ajax({
+            type: "POST",
+            url: "../emag/php/handle.php",
+            dataType: 'json',
+            data: { q:"addProduct", id:id, debug:1, delete:1 },
+            success: function(data) {
+                console.log(data);
+                adminController.showProducts();
+            },
+            error: function(data) {
+                console.log(data);
+            },
+            beforeSend:function(){
+                console.log('deleting ADMIN product...');
+            }
+        });
+    },
     createFilter: function() {
-        var name = document.getElementById('name').value,
-            namesBG = document.getElementById('names[BG]').value,
-            namesEn = document.getElementById('names[EN]').value,
-            descBG = document.getElementById('desc[BG]').value,
-            descEN = document.getElementById('desc[EN]').value,
-            searchable = document.getElementById('searchable').checked,
-            langDependant = document.getElementById('langDependant').checked;
+        var searchableValue = document.getElementById('searchable').checked,
+            langDependantValue = document.getElementById('langDependant').checked
 
-        console.log(name + " | " + namesBG + " | " + namesEn + " | " + descBG + " | " + descEN + " | " + searchable + " | " + langDependant);
+        if (!langDependantValue) {
+            var data = {
+                q: "addProperty",
+                searchable: searchableValue
+            }
+        }
+        else {
+            var data = {
+                q: "addProperty",
+                searchable: searchableValue,
+                langDependant: langDependantValue
+            }
+        }
+
+        $("textarea").each(function(){
+            data[this.id] = this.value;
+        });
+
+        console.log(data);
 
         $.ajax({
             type: "POST",
             url: "../emag/php/handle.php",
             dataType: 'json',
-            data: { q:"addProperty", name:name, 'names[BG]':namesBG, 'names[EN]':namesEn, 'desc[BG]':descBG, 'desc[EN]':descEN, searchable:searchable, langDependant:langDependant},
+            data: data,
             success: function(data) {
                 console.log(data);
                 document.getElementById('admin-tab-filters').click();
@@ -281,15 +429,15 @@ var adminController = {
     },
     createCategory: function() {
         var parentid = document.getElementById('parentid').value,
-            namesBG = document.getElementById('namesBG').value,
-            namesEn = document.getElementById('namesEN').value,
-            descBG = document.getElementById('descBG').value,
-            descEN = document.getElementById('descEN').value,
+            namesBG = document.getElementById('names[BG]').value,
+            namesEn = document.getElementById('names[EN]').value,
+            descBG = document.getElementById('desc[BG]').value,
+            descEN = document.getElementById('desc[EN]').value,
             imgUrl = document.getElementById('imgurl').value;
             checkboxes = document.getElementsByName('checkbox');
             fid = [];
 
-            for (var i = 0; i < checkboxes.length; i++) {
+        for (var i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
                     fid.push(checkboxes[i].value);
                 }
@@ -301,7 +449,7 @@ var adminController = {
             type: "POST",
             url: "../emag/php/handle.php",
             dataType: 'json',
-            data: { q:"addCategory", parentid:parentid, 'namesBG':namesBG, 'namesEN':namesEn, 'descBG':descBG, 'descEN':descEN, imgUrl:imgUrl, fid:fid},
+            data: { q:"addCategory", parentid:parentid, 'names[BG]':namesBG, 'names[EN]':namesEn, 'desc[BG]':descBG, 'desc[EN]':descEN, imgUrl:imgUrl, fid:fid},
             success: function(data) {
                 console.log(data);
                 document.getElementById('admin-tab-categories').click();
@@ -314,5 +462,62 @@ var adminController = {
                  console.log('Creating new category...');
             }
         });
+    },
+    createProduct: function() {
+        var selectCat = document.getElementById("selectedCategory");
+        var catid = selectCat.options[selectCat.selectedIndex].value;
+        var pdata = {
+            q: "addProduct",
+            catid: catid
+        }
+
+        $("textarea").each(function(){
+            pdata[this.id] = this.value;
+        });
+
+        console.log(pdata);
+
+        $.ajax({
+            type: "POST",
+            url: "../emag/php/handle.php",
+            dataType: 'json',
+            data: pdata,
+            success: function(data) {
+                console.log(data);
+                document.getElementById('admin-tab-categories').click();
+                //document.getElementById('admin-show-all-categories').click();
+            },
+            error: function(data) {
+                console.log(data);
+            },
+            beforeSend:function(){
+                 console.log('Creating new category...');
+            }
+        });
+    },
+    addProduct: function() {
+        var selectCat = document.getElementById("selectedCategory");
+        var catid = selectCat.options[selectCat.selectedIndex].value;
+        console.log(catid);
+        $.ajax({
+           type: "POST",
+           url: "../emag/php/handle.php",
+           dataType: 'json',
+           data: { q:"addProduct", catid:catid },
+           success: function(data) {
+               console.log(data);
+               templates.load('admin-products-add') //TODO
+                   .then(function(templateHtml) {
+                       $('#create-product-wrap').html(templateHtml(data.addProduct)); //TODO
+                   });
+
+           },
+           error: function(data) {
+               console.log(data);
+           },
+           beforeSend:function(){
+                console.log('Getting ADMIN filters...');
+           }
+       });
     }
 }

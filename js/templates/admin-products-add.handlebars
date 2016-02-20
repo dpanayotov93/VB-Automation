@@ -1,0 +1,10 @@
+<h2>New Product: </h2>
+ <table class="table">
+     {{#each this}}
+         <tr>
+             <td>{{@key}}:</td>
+             <td><textarea id="{{this}}"></textarea></td>
+         </tr>
+     {{/each}}
+ </table>
+ <button onclick="adminController.createProduct()">CREATE PRODUCT</button>

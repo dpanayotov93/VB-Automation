@@ -204,6 +204,7 @@ var userController = {
                         $('#page-content-wrapper').html(templateHtml(data.getUserInfo[0]));
 
                         $('#menu-partners').parent().removeClass('active');
+                        $('#menu-admin').parent().removeClass('active');
                         $('#menu-contacts').parent().removeClass('active');
                         $('#menu-profile').parent().addClass('active');
                         $('.dropdown-toggle').parent().removeClass('active');

@@ -6,6 +6,7 @@ var productsController = {
     get: function(id) {
         var tempId = 7;
 
+        $('#menu-admin').parent().removeClass('active');
         $('.dropdown-toggle').parent().addClass('active');
         $('#menu-partners').parent().removeClass('active');
         $('#menu-contacts').parent().removeClass('active');
@@ -26,7 +27,7 @@ var productsController = {
                         $('#page-content-wrapper').html(templateHtml(data.selectCat));
                         $('#products-table').dataTable({
                             responsive: true,
-                            "aoColumnDefs": [ 
+                            "aoColumnDefs": [
                                 { "bSortable": false, "aTargets": [ 0, 1, 2 ] }
                             ]
                         });
@@ -52,7 +53,7 @@ var productsController = {
             beforeSend:function(){
                  console.log('Getting Products Categories...');
             }
-        }); 
+        });
     },
     compare: function(name) {
         var totalItemsChecked = comparables.length,
@@ -108,7 +109,7 @@ var productsController = {
                         $('#page-content-wrapper').html(templateHtml(data.selectCat));
                         $('#products-table').dataTable({
                             responsive: true,
-                            "aoColumnDefs": [ 
+                            "aoColumnDefs": [
                                 { "bSortable": false, "aTargets": [ 0, 1, 2 ] }
                             ]
                         });
