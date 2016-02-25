@@ -37,7 +37,7 @@
 		$updQ->where = "id = '".$id."'";
 		while ($row = $langArray->fetch_assoc()) {
 			if (isset($_POST['names'][$row['abreviation']])) 
-				$updQ->update .= "name".$row['abreviation']." = '".$conn->real_escape_string($_POST['names'][$row['abreviation']]."',");
+				$updQ->update .= "name".$row['abreviation']." = '".$conn->real_escape_string($_POST['names'][$row['abreviation']])."',";
 			if (isset($_POST['desc'][$row['abreviation']])) 
 				$updQ->update .= "desc".$row['abreviation']." = '".$conn->real_escape_string($_POST['desc'][$row['abreviation']])."',";
 		}
@@ -84,11 +84,11 @@
 				$insQ->cols[] = "desc".$row['abreviation'];
 			}
 		}
-		if (isset($_POST['searchable'])) {
+		if (!empty($_POST['searchable'])) {
 			$insQ->insertData[] = "1";
 			$insQ->cols[] = "searchable";
 		}
-		if (isset($_POST['langDependant'])) {
+		if (!empty($_POST['langDependant'])) {
 			$insQ->insertData[] = "1";
 			$insQ->cols[] = "langDependant";
 		}

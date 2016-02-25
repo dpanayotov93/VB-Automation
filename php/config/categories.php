@@ -6,15 +6,18 @@
 		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
 		return;
 	}
+	
+	if (!isset($language))
+		$language = $GLOBALS['language'];
 
 	if (isset($_POST['catid']))
 		$where = "id = '".$conn->real_escape_string($_POST['catid'])."'";
 	elseif (isset($catid))
 		$where = "id = '".$catid."'";
 	else 
-		$where = "parentid IS NULL";
+		$where = "parentid IS NULL OR parentid = 0";
 	
-	$data = getCat($where,$conn,$language);
+	$data = getCat($where,$conn,$GLOBALS['language']);
 	
 	if (empty($data))
 		$statusMessage = makeStatusMessage(23, "error", "No categories found.");

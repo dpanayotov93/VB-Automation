@@ -75,8 +75,8 @@
 	function getCatFields($conn) {
 		$data = array("Parent id" => "parentid");
 		while($row = $GLOBALS['langResult']->fetch_assoc()) {
-			$data = array_merge($data,array("Name ".$row["abreviation"] => "names".$row["abreviation"]));
-			$data = array_merge($data,array("Discription ".$row["abreviation"] => "desc".$row["abreviation"]));
+			$data = array_merge($data,array("Name ".$row["abreviation"] => "names[".$row["abreviation"]."]"));
+			$data = array_merge($data,array("Discription ".$row["abreviation"] => "desc[".$row["abreviation"]."]"));
 		}
 		$data = array_merge($data,array("Link to image" => "imgurl"));
 		$statusMessage = makeStatusMessage(12342, "success", "Info sent!");
@@ -94,7 +94,9 @@
 		$insQ = new insertSQL($conn);
 		$insQ->insertData = array();
 		$insQ->cols = array();
-		while ($row = $GLOBALS(langResult)->fetch_assoc()) {
+		$langAbr = array();
+		while ($row = $GLOBALS['langResult']->fetch_assoc()) {
+			$langAbr[] = $row['abreviation'];
 			if (isset($_POST['names'][$row['abreviation']])) {
 				$insQ->insertData[] = $_POST['names'][$row['abreviation']];
 				$insQ->cols[] = "name".$row['abreviation'];
@@ -104,12 +106,12 @@
 				$insQ->cols[] = "desc".$row['abreviation'];
 			}
 		}
-		if (isset($_POST['imgurl'])) {
-			$insQ->insertData[] = $_POST['imgurl'];
+		if (isset($_POST['imgUrl'])) {
+			$insQ->insertData[] = $_POST['imgUrl'];
 			$insQ->cols[] = "imgurl";
 		}
-		if (isset($_POST['parent'])) {
-			$insQ->insertData[] = $_POST['parent'];
+		if (isset($_POST['parentid'])) {
+			$insQ->insertData[] = $_POST['parentid'];
 			$insQ->cols[] = "parentid";
 		}
 		
@@ -120,9 +122,9 @@
 		else {
 			$selQid = new selectSQL($conn);
 			$selQid->where = "";
-			while ($row = $GLOBALS(langResult)->fetch_assoc()) 
-				if (isset($_POST['names'][$row['abreviation']]))
-					$selQid->where = "name".$row['abreviation']." = '".$conn->real_escape_string($_POST['names'][$row['abreviation']])."' OR ";
+			foreach ($langAbr as $l)
+				if (isset($_POST['names'][$l]))
+					$selQid->where = "name".$l." = '".$conn->real_escape_string($_POST['names'][$l])."' OR ";
 				
 			$selQid->where = substr($selQid->where, 0, -4);
 			$selQid->order = "id DESC";
@@ -151,29 +153,42 @@
 					$propsLang = array();
 					while ($row = $selQ->result->fetch_assoc()) {
 						if($row['langDependant'])
-							$propsDef[] = $row['name'];
-						else
 							$propsLang[] = $row['name'];
+						else
+							$propsDef[] = $row['name'];
 					}
 					$ctQ = new createTableSQL($conn);
 					
 					$ctQ->cols = array();
+					$ctQ->cols[] = "infoid";
 					$ctQ->colTypes = array();
+					$ctQ->colTypes[] = "int(11) NOT NULL";
 					$ctQ->name = "products_".$catid;
-					foreach ($propsDef as $pr) {
-						$$ctQ->cols[] = $pr;
-						$ctQ->colTypes[] = "varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL";
+					
+					if (count($propsDef)) {
+						foreach ($propsDef as $pr) {
+							$ctQ->cols[] = $pr;
+							$ctQ->colTypes[] = "varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL";
+						}
+						
+						if (!$ctQ->executeQuery()) { 
+							$statusMessage = $ctQ->status;
+							mysqli_close($conn);
+					 		return;
+						}
 					}
 					
-					if (!$ctQ->executeQuery()) 
-						$statusMessage = $ctQ->status;
-					else {
-						while ($row = $GLOBALS(langResult)->fetch_assoc()) {
+					if (count($propsLang)) {
+						foreach ($langAbr as $l) {
+							unset($ctQ->cols);
 							$ctQ->cols = array();
+							$ctQ->cols[] = "infoid";
+							unset($ctQ->colTypes);
+							$ctQ->colTypes[] = "int(11) NOT NULL";
 							$ctQ->colTypes = array();
-							$ctQ->name = "products_".$catid."_".$row['abreviation'];
+							$ctQ->name = "products_".$catid."_".$l;
 							foreach ($propsLang as $pr) {
-								$$ctQ->cols[] = $pr;
+								$ctQ->cols[] = $pr;
 								$ctQ->colTypes[] = "varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL";
 							}
 							
@@ -183,7 +198,7 @@
 								return;
 							}
 						}
-						
+					}
 						$insQ = new insertSQL($conn);
 						$insQ->cols = array ("catid", "propid");
 						$insQ->tableName = "props_to_prods";
@@ -192,12 +207,12 @@
 							if (!$insQ->executeQuery())
 								$resultAddProps = true; 
 						}
-						
-						if (isset($resultAddProps))
-							$statusMessage = makeStatusMessage(3,"error","Could not assign properties to category.");
-						else
-							$statusMessage = makeStatusMessage(21,"success","Category successfully added!");
-					}
+					
+					if (isset($resultAddProps))
+						$statusMessage = makeStatusMessage(3,"error","Could not assign properties to category.");
+					else
+						$statusMessage = makeStatusMessage(21,"success","Category successfully added!");
+					
 				}
 			}
 		}

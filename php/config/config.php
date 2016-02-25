@@ -45,6 +45,13 @@ function checkConnection($conn) {
 		return true;
 }
 
+function checkTable($conn,$tableName) {
+	if ($conn->query("select 1 from `".$conn->real_escape_string($tableName)."` LIMIT 1"))
+		return true;
+	else 
+		return false;
+}
+
 function debugMessages($msg, $type) {
 	if ($GLOBALS[$type])
 		echo "DEBUG INFO[".$type."]:<br>".$msg."<br></br>";

@@ -30,7 +30,7 @@
 	if(isset($GLOBALS['debugSQL']) && $GLOBALS['debugSQL'])
 		echo "<form method=post action=handle.php>
 		<input type=text name=q />
-		<input type=text name='show' value=1 />
+		<input type=text name='showCats' value=1 />
 				 
 		<input type=hidden value=1 name=debug />
 		<input type=submit>

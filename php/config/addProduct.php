@@ -40,8 +40,8 @@
 		else
 			$updQ->update = "visible = 1";
 		
-		if (!$insQ->executeQuery())
-			$GLOBALS['statusMessage'] = $insQ->status;
+		if (!$updQ->executeQuery())
+			$GLOBALS['statusMessage'] = $updQ->status;
 		else 
 			$GLOBALS['statusMessage'] = makeStatusMessage(123123, "success", "Product updated.");
 	}
@@ -133,22 +133,35 @@
 		$propNamesDefld =  $arr['propNamesDefld'];
 		$propNames = $arr['propNames'];
 		$propNamesld = $arr['propNamesld'];
-			
-		$insQ = new insertSQL($conn);
-		$insQ->tableName = "products_".$catid;
-		$insQ->cols = array();
-		$insQ->insertData = array();
-		foreach ($propNames as $pn)
-			if (isset($_POST[$pn])) {
-				$insQ->cols[] = $pn;
-				$insQ->insertData[] = $conn->real_escape_string($_POST[$pn]);
+		
+		$insQdef = new insertSQL($conn);
+		$insQdef->tableName = "products";
+		$insQdef->cols = array();
+		$insQdef->insertData = array();
+		foreach ($propNamesDef as $p)
+			if (isset($_POST[$p])) {
+				$insQdef->cols[] = $p;
+				$insQdef->insertData[] = $conn->real_escape_string($_POST[$p]);
 			}
 		
-		if (!$insQ->executeQuery()) {
-			$GLOBALS['statusMessage'] = $insQ->status;
+		$langArr = array();
+		while($l = $GLOBALS['langResult']->fetch_assoc())
+			$langArr[] = $l['abreviation'];
+		
+		foreach ($propNamesDefld as $p)
+			foreach($langArr as $l) {
+				if(isset($GLOBALS['debugSQL']) && $GLOBALS['debugSQL'])
+					echo "Value of ".$p.$l." is ".$_POST[$p][$l]."<br>";
+				if (isset($_POST[$p][$l])) {
+					$insQdef->cols[] = $p.$l;
+					$insQdef->insertData[] = $conn->real_escape_string($_POST[$p][$l]);
+				}
+			}
+		if (!$insQdef->executeQuery()) {
+			$GLOBALS['statusMessage'] = $insQdef->status;
 			return;
-		}	
-	
+		}
+		
 		$selQProp = new selectSQL($conn);
 		$selQProp->tableNames = array("products");
 		$selQProp->select = array("id");
@@ -159,43 +172,42 @@
 		}
 		$tmp = $selQProp->result->fetch_assoc();
 		$infoID = $tmp['id'];
-			
-		while($l = $GLOBALS['langResult']) {
-			$insQld = new insertSQL($conn);
-			$insQld->tableName = "products_".$catid."_".$l['abreviation'];
-			$insQld->cols = array("infoid");
-			$insQld->insertData = array($infoID);
+		
+		if (count($propNames)) {
+			$insQ = new insertSQL($conn);
+			$insQ->tableName = "products_".$catid;
+			$insQ->cols = array();
+			$insQ->cols[] = "infoid";
+			$insQ->insertData = array();
+			$insQ->insertData[] = $infoID;
 			foreach ($propNames as $pn)
 				if (isset($_POST[$pn])) {
-					$insQld->cols[] = $pn;
-					$insQld->insertData[] = $conn->real_escape_string($_POST[$pn]);
+					$insQ->cols[] = $pn;
+					$insQ->insertData[] = $conn->real_escape_string($_POST[$pn]);
 				}
-			if (!$insQld->executeQuery()) {
-				$GLOBALS['statusMessage'] = $insQld->status;
+			
+			if (!$insQ->executeQuery()) {
+				$GLOBALS['statusMessage'] = $insQ->status;
 				return;
 			}
 		}
-		
-		$insQdef = new insertSQL($conn);
-		$insQdef->tableName = "products";
-		$insQdef->cols = array("infoid","dateadded");
-		$insQdef->insertData = array($infoID,time());
-		foreach ($propNamesDef as $pn)
-			if (isset($_POST[$pn])) {
-				$insQdef->cols[] = $pn;
-				$insQdef->insertData[] = $conn->real_escape_string($_POST[$pn]);
-			}
-		
-		foreach ($propNamesDefld as $pn)
-			while ($l = $GLOBALS['langResult']->fetch_assoc())
-				if (isset($_POST[$pn][$l['abreviation']])) {
-					$insQdef->cols[] = $pn.$l['abreviation'];
-					$insQdef->insertData[] = $conn->real_escape_string($_POST[$pn][$l['abreviation']]);
+		if (count($propNamesld)) {
+			foreach($langArr as $l) {
+				$insQld = new insertSQL($conn);
+				$insQld->tableName = "products_".$catid."_".$l;
+				$insQld->cols = array("infoid");
+				$insQld->insertData = array($infoID);
+				foreach ($propNamesld as $p)
+					if (isset($_POST[$p][$l])) {
+						$insQld->cols[] = $p.$l;
+						$insQld->insertData[] = $conn->real_escape_string($_POST[$p][$l]);
+					}
+				if (!$insQld->executeQuery()) {
+					$GLOBALS['statusMessage'] = $insQld->status;
+					return;
 				}
-			if (!$insQdef->executeQuery()) {
-				$GLOBALS['statusMessage'] = $insQdef->status;
-				return;
 			}
+		}
 		
 		$GLOBALS['statusMessage'] = makeStatusMessage(234, "success", "Product added succesfully.");
 	}
@@ -204,10 +216,6 @@
 		$selQ = new selectSQL($conn);
 		$selQ->select = array("propid");
 		$selQ->where = "catid = ".$conn->real_escape_string($_POST['catid']);
-		if (isset($_POST['deleted']))
-			$selQ->where .= " AND visible != 1";
-		else
-			$selQ->where .= " AND visible = 1";
 		$selQ->tableNames = array("props_to_prods");
 		if (!$selQ->executeQuery()) {
 			$GLOBALS['statusMessage'] = $selQ->status;
@@ -234,21 +242,26 @@
 			return;
 		}
 		$def = array();
-		while ($l = $GLOBALS['langResult']->fetch_assoc())
-			$def = array_merge($def, array("Name ".$l['abreviation'] => "names".$l['abreviation']));
+		$langArr = array();
+		while ($l = $GLOBALS['langResult']->fetch_assoc()) {
+			$def = array_merge($def, array("Name ".$l['abreviation'] => "names[".$l['abreviation']."]"));
+			$def = array_merge($def, array("Description ".$l['abreviation'] => "desc[".$l['abreviation']."]"));
+			$langArr[] = $l['abreviation'];
+		}
 
-		$def = array_merge($def, array("Category" => "catid","Price" => "price","Quantity" => "qty"));		
+		$def = array_merge($def, array("Price" => "price","Quantity" => "qty","Image" => "imgurl"));		
 		
 		$ld = array();
 		$lid = array();
 		while($r = $selQ->result->fetch_assoc())
-			if ($r['langDependant'])
-				while ($l = $GLOBALS['langResult']->fetch_assoc())
-					$ld = array_merge($ld, array($r["name"]." (".$l['abreviation'].")" => $r['name']."[".$l['abreviation']."]"));
-			else 
-				$lid[] = $r['name'];
+			if ($r['langDependant'] === "1") {
+				foreach ($langArr as $l)
+					$def = array_merge($def, array($r['name']." ".$l => $r['name']."[".$l."]"));
+				
+			} else 
+				$def = array_merge($def, array($r['name'] => $r['name']));
 		
-		$GLOBALS['data'] = array_merge($def,array_merge($ld,$lid));
+		$GLOBALS['data'] = $def;
 		$GLOBALS['statusMessage'] = makeStatusMessage(2142, "success", "Properties sent successfully.");
 	}
 
@@ -290,13 +303,17 @@
 		$selQ->joins = array();
 		$selQ->joinTypes = array();
 		foreach ($catid as $i) {
-			$selQ->tableNames[] = "products_".$i;
-			$selQ->joins[] = "p.infoid = products_".$i.".id";
-			$selQ->joinTypes[] = "JOIN";
+			if (checkTable($conn,"products_".$i)) {
+				$selQ->tableNames[] = "products_".$i;
+				$selQ->joins[] = "p.id = products_".$i.".infoid";
+				$selQ->joinTypes[] = "LEFT JOIN";
+			}
 			while ($r = $GLOBALS['langResult']->fetch_assoc()) {
-				$selQ->tableNames[] = "products_".$i."_".$r['abreviation'];
-				$selQ->joins[] = "p.infoid = products_".$i."_".$r['abreviation'].".infoid";
-				$selQ->joinTypes[] = "JOIN";
+				if (checkTable($conn, "products_".$i."_".$r['abreviation'])) {
+					$selQ->tableNames[] = "products_".$i."_".$r['abreviation'];
+					$selQ->joins[] = "p.id = products_".$i."_".$r['abreviation'].".infoid";
+					$selQ->joinTypes[] = "LEFT JOIN";
+				}
 			}
 		}
 		if(!$selQ->executeQuery()) {
@@ -314,21 +331,24 @@
 	}
 
 	function getPropsForCat($conn,$catid) {
-		include 'categories.php';
-		if(empty($data))
-			return null;
 	
-		$propNamesDef = array("catid","price","qty");
-		$propNamesDefld = array("name,desc");
+		$propNamesDef = array("catid","price","qty","imgurl");
+		$propNamesDefld = array("names","desc");
 		$propNames = array();
 		$propNamesld = array();
+		
+		$conn = sqlConnectDefault();
+		if(is_null($conn)) {
+			$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+			return;
+		}
 
 		$selQ = new selectSQL($conn);
-		$selQ->tableNames = array("ptp.prop_to_prod","p.properties");
-		$selQ->joins = "p.id = ptp.propid";
-		$selQ->joinTypes = "INNER JOIN";
-		$selQ->select = array("p.name as propName, p.langDependant as ld");
-		$selQ->where = "ptp.catid = '".$conn->real_escape_string($_POST['catid'])."'";
+		$selQ->tableNames = array("props_to_prods as ptp","properties as p");
+		$selQ->joins = array("p.id = ptp.propid");
+		$selQ->joinTypes = array("INNER JOIN");
+		$selQ->select = array("p.name as propName", "p.langDependant as ld");
+		$selQ->where = "ptp.catid = '".$catid."'";
 		if (!$selQ->executeQuery()) {
 			$GLOBALS['statusMessage'] = $selQ->status;
 			return null;
@@ -341,7 +361,7 @@
 					$propNamesld[] = $r['propName'];
 				else
 					$propNames[] = $r['propName'];
-
+		
 		return array("propNamesDefld" => $propNamesDefld,"propNamesDef" => $propNamesDef,"propNamesld" => $propNamesld,"propNames" => $propNames);
 								
 	}

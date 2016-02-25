@@ -28,8 +28,9 @@ abstract class basicSQL {
 			$this->makeQueryText();
 			return true;
 		}
-		debugMessages("Incomplete sql query parameters.","debugSQL");
-		$this->status = makeStatusMessage(1,"error","Database error.");
+			$this->makeQueryText();
+		debugMessages("Incomplete sql query parameters.".$this->sqlQuery,"debugSQL");
+		$this->status = makeStatusMessage(1,"error","Database error. Incorrect parameters. "+$this->sqlQuery);
 		return false;
 	}
 	
@@ -54,7 +55,7 @@ abstract class basicSQL {
 
 class selectSQL extends  basicSQL {
 	
-	var $select, $distinct, $tableNames, $joinTypes, $joins, $where, $having, $order;
+	var $select, $distinct, $tableNames, $joinTypes, $joins, $where, $having, $order, $limit;
 	
 	function checkParameters() {
 		if (empty($this->select) OR empty($this->tableNames))
@@ -77,7 +78,10 @@ class selectSQL extends  basicSQL {
 		if (!empty($this->having))
 			$qText .= " HAVING " . $this->having;
 		if (!empty($this->order))
-			$qText .= " ORDER BY" . $this->order;
+			$qText .= " ORDER BY " . $this->order;
+		if (!empty($this->limit))
+			$qText .= " LIMIT " . $this->order;
+		
 		$qText .= ";";
 		$this->sqlQuery = $qText;
 		return;
@@ -137,7 +141,7 @@ class createTableSQL extends  basicSQL {
 	var $name, $cols, $colTypes;
 
 	function checkParameters() {
-		if (count($cols) != count($colTypes))
+		if (count($this->cols) != count($this->colTypes))
 			return false;
 		if (empty($this->name) OR empty($this->cols) OR empty($this->colTypes))
 			return false;
@@ -146,7 +150,7 @@ class createTableSQL extends  basicSQL {
 
 	function makeQueryText () {
 		$qText =  "CREATE TABLE " . $this->name . " (`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ";
-		for ($i = 0; $i < count($cols); $i++)
+		for ($i = 0; $i < count($this->cols); $i++)
 			$qText .= ", `" . $this->cols[$i] . "` " . $this->colTypes[$i];
 		$qText .= ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
 		$this->sqlQuery = $qText;
