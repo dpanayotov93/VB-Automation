@@ -30,7 +30,7 @@
 	}
 
 	$selQ = new selectSQL($conn);
-	$selQ->select = array("props.name as n","props.name".$language." as lang");
+	$selQ->select = array("props.name as n","props.name".$language." as lang","props.langDependant as ld");;
 	$selQ->tableNames = array ("props_to_prods as ids", "properties as props");
 	$selQ->where = "ids.catid = '".$id."' AND props.searchable = '1'";
 	$selQ->joinTypes = array ("JOIN");
@@ -45,7 +45,10 @@
 	$propNames = array();
 	$propLangName = array();
 	while ($row = $selQ->result->fetch_assoc()) {
-		$propNames[] = $row['n'];
+                              if ($row['ld'])
+                                   $propNames[] = $row['n'].$language;
+		else
+		     $propNames[] = $row['n'];
 		$propLangName[] = $row['lang'];
 	}	
 
@@ -106,11 +109,11 @@
 
 	$selQ->distinct = false;
 	$selQ->select = array("imgurl as Image");
-	$selQ->select[] = "names".$language;
-	$selQ->select[] = "price";
+	$selQ->select[] = "names".$language." as Name"; //fix with db for default props
+	$selQ->select[] = "price as Price";//fix with db for default props
 	$cleanProps = array();
 	for ($i=0;$i<count($propNames);$i++) 
-		$selQ->select = array_merge($selQ->select,array($propNames[$i]." as ".$propLangName[$i]));
+		$selQ->select = array_merge($selQ->select,array($propNames[$i]." as `".$propLangName[$i]."`"));
 	$selQ->tableNames = array ("products as p");
 	$selQ->joins = array();
 	$selQ->joinTypes = array();

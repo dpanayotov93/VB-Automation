@@ -20,7 +20,7 @@
 			delCat($conn,0);
 		else
 			updCat($conn);
-	} elseif (isset($_POST['names']) && isset($_POST['desc']))
+	} elseif (isset($_POST['names']))
 		insCat($conn);
 	elseif (isset($_POST['showCats'])) 
 		getCats();
@@ -85,6 +85,7 @@
 	}
 	
 	function getCats() {
+		$allLangs = 1;
 		include_once 'categories.php';
 		$GLOBALS['data'] = $data;
 		$GLOBALS['statusMessage'] = $statusMessage;
@@ -138,13 +139,12 @@
 				$catid = $row['id'];
 			
 				$selQ = new selectSQL($conn);
-				$selQ->select = array ("name,langDependant");
+				$selQ->select = array ("name","langDependant");
 				$selQ->tableNames = array ("properties");
-				$selQ->where = "";
-				foreach ($_POST['fid'] as $f) {
-					$selQ->where .= "id = '".$f."' OR ";
-				}
-				$selQ->where = substr($selQ->where, 0, -4);
+				$tmp = array();
+				foreach ($_POST['fid'] as $f) 
+					$tmp[] = $conn->real_escape_string($f);
+				$selQ->where = "id IN (".arrToQueryString($tmp,null).")";
 				
 				if (!$selQ->executeQuery() OR $selQ->getNumberOfResults() == 0)
 					$statusMessage = makeStatusMessage(234, "error", "Error getting category properties.");
@@ -181,14 +181,12 @@
 					if (count($propsLang)) {
 						foreach ($langAbr as $l) {
 							unset($ctQ->cols);
-							$ctQ->cols = array();
 							$ctQ->cols[] = "infoid";
 							unset($ctQ->colTypes);
 							$ctQ->colTypes[] = "int(11) NOT NULL";
-							$ctQ->colTypes = array();
 							$ctQ->name = "products_".$catid."_".$l;
 							foreach ($propsLang as $pr) {
-								$ctQ->cols[] = $pr;
+								$ctQ->cols[] = $pr.$l;
 								$ctQ->colTypes[] = "varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL";
 							}
 							
@@ -199,14 +197,15 @@
 							}
 						}
 					}
-						$insQ = new insertSQL($conn);
-						$insQ->cols = array ("catid", "propid");
-						$insQ->tableName = "props_to_prods";
-						foreach ($_POST['fid'] as $f) {
-							$insQ->insertData = array($catid,$f);
-							if (!$insQ->executeQuery())
-								$resultAddProps = true; 
-						}
+					
+					$insQ = new insertSQL($conn);
+					$insQ->cols = array ("catid", "propid");
+					$insQ->tableName = "props_to_prods";
+					foreach ($_POST['fid'] as $f) {
+						$insQ->insertData = array($catid,$f);
+						if (!$insQ->executeQuery())
+							$resultAddProps = true; 
+					}
 					
 					if (isset($resultAddProps))
 						$statusMessage = makeStatusMessage(3,"error","Could not assign properties to category.");

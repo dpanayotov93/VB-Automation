@@ -21,7 +21,7 @@
 			delProd($conn,0);
 		else
 			updProd($conn);
-	} elseif (isset($_POST['names']) && isset($_POST['desc']) && isset($_POST['catid']))
+	} elseif (isset($_POST['names']) && isset($_POST['catid']))
 		insProd($conn);
 	elseif (isset($_POST['catid']))
 		getProdFields($conn);
@@ -57,6 +57,10 @@
 		$propNames = $arr['propNames'];
 		$propNamesld = $arr['propNamesld'];
 		
+		$langArr = array();
+		while ($l = $GLOBALS['langResult']) 
+			$langArr[] = $l['abreviation'];
+		
 		$updQ = new updateSQL($conn);
 		$updQ->tableName = "products";
 		$updQ->where = "id = ".$conn->real_escape_string($_POST['id']);
@@ -65,9 +69,9 @@
 			if (isset($_POST[$pn])) 
 				$updQ->update[] = $pn." = '".$conn->real_escape_string($_POST[$pn])."' AND ";
 		foreach ($propNamesDefld as $pn)
-			while ($l = $GLOBALS['langResult'])
-				if (isset($_POST[$pn][$l['abreviation']])) 
-					$updQ->update[] = $pn.$l['abreviation']." = '".$conn->real_escape_string($_POST[$pn][$l['abreviation']])."' AND ";
+			foreach ($langArr as $l)
+				if (isset($_POST[$pn][$l])) 
+					$updQ->update[] = $pn.$l." = '".$conn->real_escape_string($_POST[$pn][$l])."' AND ";
 
 		$updQ->update = substr($updQ->update, 0, -5);
 		
@@ -87,35 +91,39 @@
 		$tmp = $selQProp->result->fetch_assoc();
 		$infoID = $tmp['id'];
 		
-		$updQ2 = new updateSQL($conn);
-		$updQ2->tableName = "products_".$catid;
-		$updQ2->where = "id = ".$infoID;
-		$updQ2->update = "";
-		foreach ($propNames as $pn)
-			if (isset($_POST[$pn]))
-				$updQ2->update[] = $pn." = '".$conn->real_escape_string($_POST[$pn])."' AND ";
-		
-		$updQ2->update = substr($updQ2->update, 0, -5);
-
-		if (!$updQ2Q->executeQuery()) {
-			$GLOBALS['statusMessage'] = $updQ2->status;
-			return;
-		}
-
-		while ($l = $GLOBALS['langResult']) {
-			$updQ3 = new updateSQL($conn);
-			$updQ3->tableName = "products_".$catid."_".$l['abreviation'];
-			$updQ3->where = "infoid = ".$infoID;
-			$updQ3->update = "";
+		if (count($propNames)) {
+			$updQ2 = new updateSQL($conn);
+			$updQ2->tableName = "products_".$catid;
+			$updQ2->where = "id = ".$infoID;
+			$updQ2->update = "";
 			foreach ($propNames as $pn)
 				if (isset($_POST[$pn]))
-					$updQ3->update[] = $pn." = '".$conn->real_escape_string($_POST[$pn])."' AND ";
+					$updQ2->update[] = $pn." = '".$conn->real_escape_string($_POST[$pn])."' AND ";
 			
-			$updQ3->update = substr($updQ3->update, 0, -5);
+			$updQ2->update = substr($updQ2->update, 0, -5);
 	
-			if (!$updQ3Q->executeQuery()) {
-				$GLOBALS['statusMessage'] = $updQ3->status;
+			if (!$updQ2Q->executeQuery()) {
+				$GLOBALS['statusMessage'] = $updQ2->status;
 				return;
+			}
+		}
+		
+		if (count($propNamesld)) {
+			foreach ($langArr as $l) {
+				$updQ3 = new updateSQL($conn);
+				$updQ3->tableName = "products_".$catid."_".$l;
+				$updQ3->where = "infoid = ".$infoID;
+				$updQ3->update = "";
+				foreach ($propNamesld as $pn)
+					if (isset($_POST[$pn][$l]))
+						$updQ3->update[] = $pn.$l." = '".$conn->real_escape_string($_POST[$pn][$l])."' AND ";
+				
+				$updQ3->update = substr($updQ3->update, 0, -5);
+		
+				if (!$updQ3Q->executeQuery()) {
+					$GLOBALS['statusMessage'] = $updQ3->status;
+					return;
+				}
 			}
 		}
 		
@@ -133,6 +141,10 @@
 		$propNamesDefld =  $arr['propNamesDefld'];
 		$propNames = $arr['propNames'];
 		$propNamesld = $arr['propNamesld'];
+
+		$langArr = array();
+		while($l = $GLOBALS['langResult']->fetch_assoc())
+			$langArr[] = $l['abreviation'];
 		
 		$insQdef = new insertSQL($conn);
 		$insQdef->tableName = "products";
@@ -144,19 +156,13 @@
 				$insQdef->insertData[] = $conn->real_escape_string($_POST[$p]);
 			}
 		
-		$langArr = array();
-		while($l = $GLOBALS['langResult']->fetch_assoc())
-			$langArr[] = $l['abreviation'];
-		
 		foreach ($propNamesDefld as $p)
-			foreach($langArr as $l) {
-				if(isset($GLOBALS['debugSQL']) && $GLOBALS['debugSQL'])
-					echo "Value of ".$p.$l." is ".$_POST[$p][$l]."<br>";
+			foreach($langArr as $l) 
 				if (isset($_POST[$p][$l])) {
 					$insQdef->cols[] = $p.$l;
 					$insQdef->insertData[] = $conn->real_escape_string($_POST[$p][$l]);
 				}
-			}
+
 		if (!$insQdef->executeQuery()) {
 			$GLOBALS['statusMessage'] = $insQdef->status;
 			return;
@@ -231,7 +237,7 @@
 		$props = substr($props,0,-1);
 		
 		$selQ = new selectSQL($conn);
-		$selQ->select = array("name,langDependant");
+		$selQ->select = array("name".$GLOBALS['language']." as name","langDependant");
 		$selQ->tableNames = array("properties");
 		$selQ->where = "id IN (".$props.")";
 		if (!$selQ->executeQuery()) {
@@ -254,11 +260,10 @@
 		$ld = array();
 		$lid = array();
 		while($r = $selQ->result->fetch_assoc())
-			if ($r['langDependant'] === "1") {
+			if ($r['langDependant'])
 				foreach ($langArr as $l)
 					$def = array_merge($def, array($r['name']." ".$l => $r['name']."[".$l."]"));
-				
-			} else 
+			else 
 				$def = array_merge($def, array($r['name'] => $r['name']));
 		
 		$GLOBALS['data'] = $def;
@@ -321,7 +326,7 @@
 			mysqli_close($conn);
 			return;
 		}
-		$data;
+		$data = array();
 		while ($r=$selQ->result->fetch_assoc()) 
 			$data[] = $r;
 		
