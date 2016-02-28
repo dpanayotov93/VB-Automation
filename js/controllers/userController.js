@@ -1,3 +1,4 @@
+/* global templates */
 /* global testData */
 /* global cookiesController */
 var userData = {};
@@ -28,6 +29,7 @@ var userController = {
                 dataType: "json",
                 success: function (data) {
                     console.log(data);
+                    toastr.success('Complete', 'SIGN UP');
                 },
                 error: function(data) {
                     console.log(data);
@@ -70,7 +72,7 @@ var userController = {
                   var statusMessage = data.status.type;
                   console.log(data);
                   if (statusMessage === 'success') {
-                      console.log(); 
+                      console.log();
                       cookiesController.set(email, password);
 
                       userData.id = data.signin.id;
@@ -79,17 +81,18 @@ var userController = {
                       $('#menu-profile')[0].style.display = 'inline-block';
                       $('#menu-login').hide();
                       $('#menu-admin')[0].style.display = 'none';
-                      
+
                       if(data.signin[0].access === '3') {
                           console.log('Welcome Admin!');
                           $('#menu-admin')[0].style.display = 'inline-block';
                       }
+                      toastr.success('You have logged in successfuly.', 'WELCOME!');
                   }
               }
             });
     },
     signOut: function() {
-        console.log('Signing out...');
+        toastr.success('SUCCESSFUL!', 'SIGN OUT');
         $('#menu-profile')[0].style.display = 'none';
         $('#menu-login').show();
         $('#menu-admin')[0].style.display = 'none';
@@ -100,6 +103,7 @@ var userController = {
     },
     addToCart: function(name) {
         testData.cart.push(name);
+        toastr.success('Added to your cart!', name);
     },
     keepSession: function() {
         var email = cookiesController.get('email'),
@@ -114,18 +118,18 @@ var userController = {
                 var statusMessage = data.status.type,
                     date = new Date(),
                     cookieUserId;
-                    
+
                 console.log(data);
                 if (statusMessage === 'success') {
                     console.log(statusMessage);
-                    
+
                     userData.id = data.signin[0].id;
-                    
+
                     date.setTime(date.getTime()+(7*24*60*60*1000));
                     cookieUserId = "userId=" + data.signin[0].id + '; expires=' + date;
                     document.cookie = cookieUserId;
-                    
-                    
+
+
                     $('#addListItem').modal('hide');
                     $('#menu-profile')[0].style.display = 'inline-block';
                     $('#menu-login').hide();
@@ -200,12 +204,13 @@ var userController = {
                         $('#page-content-wrapper').html(templateHtml(data.getUserInfo[0]));
 
                         $('#menu-partners').parent().removeClass('active');
+                        $('#menu-admin').parent().removeClass('active');
                         $('#menu-contacts').parent().removeClass('active');
                         $('#menu-profile').parent().addClass('active');
                         $('.dropdown-toggle').parent().removeClass('active');
                         $('ul.nav a[href=""]').parent().removeClass('active');
 
-                        data.getUserInfo[0].username = cookiesController.get('email');  
+                        data.getUserInfo[0].username = cookiesController.get('email');
                         data.getUserInfo[0].password = cookiesController.get('password');
 
                         templates.load('profile-info')

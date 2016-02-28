@@ -6,6 +6,7 @@ var productsController = {
     get: function(id) {
         var tempId = 7;
 
+        $('#menu-admin').parent().removeClass('active');
         $('.dropdown-toggle').parent().addClass('active');
         $('#menu-partners').parent().removeClass('active');
         $('#menu-contacts').parent().removeClass('active');
@@ -25,7 +26,10 @@ var productsController = {
                     .then(function(templateHtml) {
                         $('#page-content-wrapper').html(templateHtml(data.selectCat));
                         $('#products-table').dataTable({
-                            responsive: true
+                            responsive: true,
+                            "aoColumnDefs": [
+                                { "bSortable": false, "aTargets": [ 0, 1, 2 ] }
+                            ]
                         });
                     });
 
@@ -49,7 +53,7 @@ var productsController = {
             beforeSend:function(){
                  console.log('Getting Products Categories...');
             }
-        }); 
+        });
     },
     compare: function(name) {
         var totalItemsChecked = comparables.length,
@@ -78,35 +82,44 @@ var productsController = {
         }
         console.log(comparables);
     },
-    filter: function (filter) {
-        var tempId = 7;
-        console.log('Filtering ' + filter + ' ...');
+    filter: function(value, name) {
+        console.log(name + " | " + value);
+        testData.selectedFilers.name.push(name)
+        testData.selectedFilers.value.push(value)
 
-        filters.push(filter);
-
-        console.log(filters);
+        var newData = {
+            q:"selectCat",
+            id:7
+        }
+        console.log(testData.name);
+        for (var i = 0; i < testData.selectedFilers.name.length; i += 1) {
+            newData["filters[" + testData.selectedFilers.name[i] + "]"] = testData.selectedFilers.value[i];
+        }
+        console.log(newData);
 
         $.ajax({
             type: "POST",
             url: "../emag/php/handle.php",
             dataType: 'json',
-            data: { q: "selectCat", id: tempId, filters: filters },
-            success: function (data) {
-                console.log(data.selectCat);
+            data: newData,
+            success: function(data) {
+                console.log(data);
                 templates.load('products')
-                    .then(function (templateHtml) {
+                    .then(function(templateHtml) {
                         $('#page-content-wrapper').html(templateHtml(data.selectCat));
                         $('#products-table').dataTable({
-                            responsive: true
+                            responsive: true,
+                            "aoColumnDefs": [
+                                { "bSortable": false, "aTargets": [ 0, 1, 2 ] }
+                            ]
                         });
                     });
-
             },
-            error: function (data) {
+            error: function(data) {
                 console.log(data);
             },
-            beforeSend: function () {
-                console.log('Getting Filtered Products Categories...');
+            beforeSend:function(){
+                 console.log('fetching');
             }
         });
     },

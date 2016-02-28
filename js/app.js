@@ -1,3 +1,5 @@
+/* global adminController */
+/* global homeController */
 /* global Sammy */
 /* global partnersController */
 /* global contactController */
@@ -15,6 +17,7 @@ $(document).ready(function() {
         this.get('#/Profile', userController.showProfile);
         this.get('#/Partners', partnersController.init);
         this.get('#/Contact', contactController.init);
+        this.get('#/Admin', adminController.init);
 
     });
 

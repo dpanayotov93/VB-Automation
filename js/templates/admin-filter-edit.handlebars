@@ -1,0 +1,18 @@
+<table class="table">
+    <tr>
+        <td>ID:</td>
+        <td id="filterId">{{this.id}}</td>
+    </tr>
+    {{#each input}}
+        <tr>
+            <td>{{@key}}:</td>
+            <td><textarea id="{{this}}"></textarea></td>
+        </tr>
+    {{/each}}
+    {{#each checkbox}}
+        <tr>
+            <td>{{@key}}:</td>
+            <td><input id="{{this}}" type="checkbox"></td>
+        </tr>
+    {{/each}}
+</table>

@@ -8,11 +8,13 @@
         <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.10/css/dataTables.bootstrap.min.css"> -->
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/dt/dt-1.10.10,r-2.0.0/datatables.min.css"/>
         <link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/emag/node_modules/toastr/package/toastr.css"/>
+        <!-- <link rel="stylesheet" href="/emag/node_modules/toastr/package/toastr.css"/> -->
         <link rel="stylesheet" href="/emag/css/style.css">
         <link rel="stylesheet" href="/emag/css/profile.css">
         <link rel="stylesheet" href="/emag/css/sidebar.css">
-        <link rel="stylesheet" href="http://css-spinners.com/css/spinner/throbber.css" type="text/css">
-        
+        <link rel="stylesheet" href="/emag/css/loading.css">
+
         <link rel='shortcut icon' type='image/x-icon' href='/emag/favicon.ico' />
     </head>
     <body>
@@ -72,7 +74,7 @@
                   </li> -->
                 <!-- <li><a href="../navbar/"><span class="glyphicon glyphicon-search"></span></a></li> -->
                 <li><a href="#menu-toggle" id="menu-toggle"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
-                <li><a href="" id="menu-admin"><span class="glyphicon glyphicon-king"></span> Admin</a></li>
+                <li><a href="#/Admin" id="menu-admin"><span class="glyphicon glyphicon-king"></span> Admin</a></li>
                 <li><a href="#/Profile" id="menu-profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
                 <li><a onclick="userController.showModal()" id="menu-login" data-toggle="modal" data-target="#mdl-join"><span class="glyphicon glyphicon-user"></span> Login</a></li>
           </ul>
@@ -99,8 +101,15 @@
             <div id="page-content-wrapper" class="container">
                 <div class="jumbotron">
                     <div class="container" style="text-align: center; padding-top: 10em;">
-                        <div class="throbber-loader">
-                            Loading…
+                        <div class="cssload-loader">
+                        	<div class="cssload-side"></div>
+                        	<div class="cssload-side"></div>
+                        	<div class="cssload-side"></div>
+                        	<div class="cssload-side"></div>
+                        	<div class="cssload-side"></div>
+                        	<div class="cssload-side"></div>
+                        	<div class="cssload-side"></div>
+                        	<div class="cssload-side"></div>
                         </div>
                     </div>
                 </div>
@@ -135,10 +144,35 @@
         <script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/s/dt/dt-1.10.10,r-2.0.0/datatables.min.js"></script>
 
-        <!-- handlebars
+        <!-- Handlebars
         ================================================== -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
 
+        <!-- Toastr
+        ================================================== -->
+        <script src="/emag/node_modules/toastr/package/toastr.js"></script>
+        <script>
+            $(document).ready(function() {
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": false,
+                    "positionClass": "toast-top-full-width",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                }
+            })
+        </script>
+        <!-- <script src="/emag/node_modules/toastr/package/toastr.js"></script> -->
 
         <!-- User
         ================================================== -->
@@ -153,6 +187,7 @@
         <script src="/emag/js/controllers/profileController.js"></script>
         <script src="/emag/js/controllers/partnersController.js"></script>
         <script src="/emag/js/controllers/contactController.js"></script>
+        <script src="/emag/js/controllers/adminController.js"></script>
         <script src="/emag/js/controllers/cookiesController.js"></script>
 
         <script src="/emag/js/ie-promise.js"></script>

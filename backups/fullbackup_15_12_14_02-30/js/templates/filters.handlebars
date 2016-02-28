@@ -1,0 +1,30 @@
+<h1>FILTERS</h1>
+<div id="filters-table-wrap">
+<table id="filters-table">
+        <thead>
+            <th>
+            </th>
+        </thead>
+        <tbody>
+            {{#each this}}
+            <tr>
+                    {{#each this}}
+                        {{#if @first}}
+                            <td>
+                                {{this}}
+                            </td>
+                        {{/if}}
+                        {{#each this}}
+                            <td>
+                                <a onclick="productsController.filter('{{../../this.name}}', '{{this}}', '{{../../this.id}}')">
+                                    {{this}}
+                                </a>
+                            </td>
+                        {{/each}}
+                    {{/each}}
+            </tr>
+            {{/each}}
+        <tbody>
+    </table>
+</div>
+<button onclick="categoriesController.onMouseClick(7)" id="clear-filters">CLEAR</button>

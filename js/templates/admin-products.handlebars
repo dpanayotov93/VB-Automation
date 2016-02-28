@@ -1,0 +1,21 @@
+<div style="text-align: center">
+    <button class="btn btn-primary" onclick="$('#create-product-wrap').show(); $('#show-products-wrap').hide(); adminController.addProduct()">ADD NEW PRODUCTS</button>
+    </br>
+    <h3>Pick a category: </h3>
+    <select id="selectedCategory" onchange="adminController.showProducts()">
+        <option value=0> </option>
+        {{#each this}}
+          <option value="{{this.id}}">{{this.nameEN}}</option>
+        {{/each}}
+    </select>
+
+    <!-- <button class="btn btn-primary" id="admin-show-all-products" onclick="$('#create-product-wrap').hide(); $('#show-products-wrap').show();">SHOW PRODUCTS</button> -->
+</div>
+
+<div class="row" id="create-product-wrap"  style="display: none;">
+
+</div>
+
+<div class="row" id="show-products-wrap">
+
+</div>

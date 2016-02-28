@@ -1,0 +1,43 @@
+ADD DISCOUNT
+ 1. Получаване на всички отстъпки
+  Заявка:
+	q=addDiscount
+  Връща:
+	"addDiscount":[{"discountid":"1","flat":"1","percent":"1","userid":"1","username":"mail@example.com","categoryid":"0","category":"*","productid":"0","product":"*"}]
+	status.type = error/success
+ 
+ 2. Добавяне на отстъпка
+  Заявка:
+	q=addDiscount
+	user = id на user
+	catid = id на категория
+	prodid = id на продукт
+	flat = плоска отстъпка И/ИЛИ percent = процент отстъпка
+  Връща:
+	status.type = error/success
+	 
+ 3. Редактиране на отстъпка
+  Заявка:
+	q=addDiscount
+	user = id на user
+	catid = id на категория
+	prodid = id на продукт
+	flat = плоска отстъпка И/ИЛИ percent = процент отстъпка
+	discountid = id на отстъпка
+  Връща:
+	status.type = error/success
+	 
+ 4. Изтриване на отстъпка
+  Заявка:
+	q=addDiscount
+	user = id на user
+	catid = id на категория
+	prodid = id на продукт
+	flat = плоска отстъпка И/ИЛИ percent = процент отстъпка
+	discountid = id на отстъпка
+	delete = нещо, няма значиене
+	
+	*** ДА, иска да са сложени всички параметри, макар да трие... ще го оправя някога :D
+  Връща:
+	status.type = error/success
+	

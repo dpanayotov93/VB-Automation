@@ -29,7 +29,7 @@
                           {{/if}}
                           <!-- {{#each this}} -->
                               <td>
-                                  <a onclick="productsController.filter('{{this}}')">
+                                  <a onclick="productsController.filter('{{this}}', '{{../../this.name}}')">
                                       {{this}}
                                   </a>
                               </td>
@@ -47,11 +47,14 @@
       <thead class="thead-inverse">
           <tr>
               <th>
+
+              </th>
+              <th>
                   Purchase
               </th>
               <th>
                   Compare
-              </th>              
+              </th>
                 {{#each products}}
                     {{#if @first}}
                         {{#each this}}
@@ -65,26 +68,26 @@
       </thead>
       <tbody>
           {{#each products}}
-              <tr>                  
+              <tr>
+                  <td>
+
+                  </td>
                   <td>
                       <button onclick="productsController.addToCart('{{this.system}}')" type="button" class="btn-block">ADD</button>
                   </td>
                   <td>
                       <input type="checkbox" onchange="productsController.compare('{{this.system}}')" class="checkbox-primary" value="">
-                  </td>                
+                  </td>
                   {{#each this}}
-                      {{#if @last}}
-                        <td>
-                            <img class="img-responsive img-responsive-2" src="{{this}}"/>
-                        </td>
-                      {{/if}}
-                  {{/each}}
-                  {{#each this}}
-                    {{#unless @last}}
+                    {{#if @first}}
+                    <td>
+                        <img src="{{this}}" width="240px" alt=""/> 
+                    </td>
+                    {{else}}
                         <td>
                             {{this}}
                         </td>
-                    {{/unless}}
+                    {{/if}}
                   {{/each}}
               </tr>
           {{/each}}

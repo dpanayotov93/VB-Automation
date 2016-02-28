@@ -1,0 +1,58 @@
+<div class="jumbotron">
+    <div class="container" style="text-align: center">
+        <h1 id="h1-admin-lable">Admin Panel</h1>
+        <div class="container">
+            <div id="exTab2" class="container">
+            <ul class="nav nav-tabs">
+                <li>
+                    <a href="#0" onclick="adminController.tabStatistics()" data-toggle="tab">
+                        <span class="glyphicon glyphicon-dashboard"></span>
+                        Statistics
+                    </a>
+                </li>
+                <!-- <li>
+                    <a href="#1" data-toggle="tab">
+                        <span class="glyphicon glyphicon-user"></span>
+                        Users
+                    </a>
+                </li> -->
+                <li>
+                    <a id="admin-tab-categories" onclick="adminController.tabCategories()" href="#2" data-toggle="tab">
+                        <span class="glyphicon glyphicon-th"></span>
+                        Categories
+                    </a>
+                </li>
+                <li>
+                    <a id="admin-tab-filters" onclick="adminController.tabFilters()" href="#3" data-toggle="tab">
+                        <span class="glyphicon glyphicon-list-alt"></span>
+                        Filters
+                    </a>
+                </li>
+                <li>
+                    <a id="admin-tab-products" onclick="adminController.tabProducts()" href="#4" data-toggle="tab">
+                        <span class="glyphicon glyphicon-th-list"></span>
+                        Products
+                    </a>
+                </li>
+            </ul>
+            </div>
+
+            <div class="tab-content ">
+                <div class="tab-pane active" id="0">
+                </div>
+
+                <div class="tab-pane" id="1">
+                </div>
+
+                <div class="tab-pane" id="2">
+                </div>
+
+                <div class="tab-pane" id="3">
+                </div>
+
+                <div class="tab-pane" id="4">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

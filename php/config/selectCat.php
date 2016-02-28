@@ -45,8 +45,8 @@
 	$propNames = array();
 	$propLangName = array();
 	while ($row = $selQ->result->fetch_assoc()) {
-                              if ($row['ld'])
-                                   $propNames[] = $row['n'].$language;
+		if ($row['ld'])
+			$propNames[] = $row['n'].$language;
 		else
 		     $propNames[] = $row['n'];
 		$propLangName[] = $row['lang'];

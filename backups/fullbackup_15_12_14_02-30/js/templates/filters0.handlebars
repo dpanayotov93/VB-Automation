@@ -1,0 +1,33 @@
+<h1 id="category-name">Filters</h1>
+<div id="filters-table-wrap">
+<table id="filters-table">
+        <thead>
+            {{#each this}}
+                {{#each this}}
+                    {{#if @first}}
+                        <th onclick="categoriesController.onMouseClick(7)" value="{{this}}">{{this}}</th>
+                    {{/if}}
+                {{/each}}
+            {{/each}}
+        </thead>
+        <tbody>
+            <tr>
+            {{#each this}}
+                    {{#each this}}
+                        {{#unless @first}}
+                            <td>
+                                <ul>
+                                {{#each this}}
+                                    <li onclick="productsController.filter('{{../../this.name}}', '{{this}}', '{{../../this.id}}')" value="{{this}}">{{this}}</li>
+                                {{/each}}
+                                </ul>
+                            </td>
+                        {{/unless}}
+                    {{/each}}
+            {{/each}}
+            </tr>
+        <tbody>
+    </table>
+</div>
+<button onclick="categoriesController.onMouseClick(7)" id="clear-filters">CLEAR</button>
+<!-- <button onclick="$('html, body').animate({ scrollTop: 0 }, 'slow')" id="show-close-filters">FILTERS</button> -->

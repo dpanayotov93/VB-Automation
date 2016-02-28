@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>E-Shop</title>
+
+    	<link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
+
+    	<link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
+        <link rel="stylesheet" href="css/style.css"> <!-- Resource style -->
+
+        <link rel="stylesheet" href="js/stacktable/stacktable.css"> <!-- Resource style -->
+        <!-- <link rel="stylesheet" href="js/stacktable/css/style.css"> <!-- Resource style --> -->
+
+        <link rel="stylesheet" href="css/master.css">
+        <link rel="stylesheet" href="css/log-reg-pane.css">
+        <link rel="stylesheet" href="css/loading-bar.css">
+        <link rel="stylesheet" href="css/promo-products.css">
+        <link rel="stylesheet" href="js/dynatables/jquery.dynatable.css">
+
+        <script src="js/modernizr.js"></script> <!-- Modernizr -->
+    </head>
+    <body onload="categoriesController.onLoaded">
+        <header>
+    		<div class="cd-logo"><a href="#/Home">VB Automation</a></div>
+
+    		<nav class="cd-main-nav-wrapper">
+    			<ul class="cd-main-nav">
+    				<li><a href="#/Home">Home</a></li>
+    				<!-- <li><a href="#/Products">Products</a></li> -->
+    				<li><a href="#/Partners">Partners</a></li>
+    				<li><a href="#/Contacts">Contacts</a></li>
+    				<li>
+    					<a href="#" class="cd-subnav-trigger"><span>Products</span></a>
+
+    					<ul id="categories-list">
+    						<li class="go-back"><a>Menu</a></li>
+                            {{#each this}}
+                                <li><a onclick="categoriesController.onMouseClick('{{this.id}}')" href="#/Products">{{this.nameEN}}</a></li>
+                            {{/each}}
+    						<li><a href="#0" class="placeholder">Placeholder</a></li>
+    					</ul>
+    				</li>
+                    <li id="join-li"><a class="btns-sign" id="btn-sign-in">JOIN</a></div>
+                    <li><a alt="Cart" id="cart" onclick=""></a></li>
+                    <li><a alt="search" id="search-icon" onclick="searchShowHide()"></a></li>
+                </ul> <!-- .cd-main-nav -->
+    		</nav> <!-- .cd-main-nav-wrapper -->
+
+    		<a href="#/Products" class="cd-nav-trigger">Menu<span></span></a>
+    	</header>
+        <main class="cd-main-content">
+
+            <div id="sign-pane"></div>
+            <div id="filters-list"></div>
+            <article id="container">
+                <div class="spinner">
+                  <div class="rect1"></div>
+                  <div class="rect2"></div>
+                  <div class="rect3"></div>
+                  <div class="rect4"></div>
+                  <div class="rect5"></div>
+                </div>
+            </article>
+            <footer>
+                Copyright (c) 2015 by Dimitar Panayotov and Velko Todorov. All Rights Reserved.
+            </footer>
+        </main>
+        <!-- External Libraries -->
+            <script src="node_modules/jquery/dist/jquery.js"></script>
+            <script src="node_modules/sammy/lib/sammy.js"></script>
+            <script src="node_modules/handlebars/dist/handlebars.js"></script>
+            <script src="node_modules/desandro-classie/classie.js"></script>
+            <script src="js/dynatables/jquery.dynatable.js"></script>
+            <script src="js/stacktable/stacktable.js"></script>
+        <!-- Internal Scripts -->
+            <!-- Controllers -->
+            <script src="js/controllers/contactsController.js"></script>
+            <script src="js/controllers/homeController.js"></script>
+            <script src="js/controllers/partnersController.js"></script>
+            <script src="js/controllers/productsController.js"></script>
+            <script src="js/controllers/navigationController.js"></script>
+            <script src="js/controllers/categoriesController.js"></script>
+            <script src="js/controllers/userController.js"></script>
+            <script src="js/controllers/cookiesController.js"></script>
+            <!-- Templates -->
+            <script src="js/templates.js"></script>
+            <!-- Main -->
+            <script src="js/app.js"></script>
+            <!-- Other -->
+            <script src="js/testData.js"></script>
+
+            <script src="js/main.js"></script>
+    </body>
+</html>

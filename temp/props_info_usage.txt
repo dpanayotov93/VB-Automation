@@ -1,0 +1,69 @@
+PROPERTIES AND CATEGORIES
+
+Добавяне на свойства (properties):
+
+1. Получаване на полета за добавяне на свойства
+ 
+  Заявка:
+	q=addProperty 
+ 
+ Връща:
+	Списък с имена на инпути, които трябва да съдържа (за всички налични езици)
+	Ключът на всяка променлива е наименованието, което трябва да се изписва за ствойството.
+	Стойността е името на input-a, който трябва да се прати по POST. (може да се разменят или да се направят по друг начини, така е с най-малко изпращане на данни)
+	"addProperty":[{"Unique name":"name"},{"Name EN":"nameEN"},{"Discription EN":"descEN"},{"Appears in filters":"searchable"},{"Differs in languages":"langDependant"}]
+
+
+2. Добавяне на свойство
+  
+  Заявка:
+	q=addProperty
+	Попълнени получените полета. (Уникално име + имена и описания на всички езици + searchable + languageDependant) 
+	  ** Може да има празни полета, но не е хубаво
+	  ** SEARCHABLE и languageDependant са bool -> ползвай checkbox
+  
+  Връща:
+	status.type = success/error
+	
+3. Получаване на всички свойства
+  
+  Заявка:
+	q=addProperty
+	showProps=1
+	
+	ако има deleted=1 показва изтритите свойства
+  
+  Връща:
+	JSON обект със всички свойства и техните параметри.
+
+
+4. Обновяване на свойство
+  
+  Заявка:
+	q=addProperty
+	id=[id на продукт]
+	Попълнени получените полета. (Уникално име + имена и описания на всички езици + searchable + languageDependant) 
+	  ** Може да има празни полета
+  
+  Връща:
+	status.type = success/error
+
+5. Изтриване/скриване на свойство
+  
+  Заявка:
+	q=addProperty
+	delete=1
+  
+  Връща:
+	status.type = success/error
+
+5. Възтановяване/позакване на скрито свойство
+  
+  Заявка:
+	q=addProperty
+	restore=1
+  
+  Връща:
+	status.type = success/error
+
+	
