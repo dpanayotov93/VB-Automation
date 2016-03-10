@@ -69,7 +69,9 @@ class selectSQL extends  basicSQL {
 		$qText = "SELECT ";
 		if ($this->distinct)
 			$qText .= "DISTINCT ";
-		$qText .= arrToQueryString($this->select, false) . " FROM " . $this->tableNames[0];
+		$qText .= arrToQueryString($this->select, false);
+		if (isset($this->tableNames) AND count($this->tableNames)) 
+			$qText .= " FROM " . $this->tableNames[0];
 		if (count($this->joins))
 			for ($i = 0; $i < count($this->joins); $i++)
 				$qText .= " " . $this->joinTypes[$i] . " " . $this->tableNames[$i+1] . " ON " . $this->joins[$i];

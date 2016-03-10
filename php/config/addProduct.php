@@ -271,6 +271,10 @@
 	}
 
 	function getProds($conn) {
+		$langArr = array();
+		while ($r = $GLOBALS['langResult']->fetch_assoc())
+			$langArr[] = $r['abreviation'];
+		
 		$catid = array();
 		if (empty($_POST['catid'])) {
 			$selQ = new selectSQL($conn);
@@ -287,11 +291,24 @@
 			}
 			while ($r = $selQ->result->fetch_assoc())
 				$catid[] = $r['id'];
-		} else
+			$propNames = array("*");
+		} else {
 			$catid[] = $conn->real_escape_string($_POST['catid']);
+			$arr = getPropsForCat($conn,$catid[0],$langArr);
+			if (!$arr)
+				return;
+			
+			$propNames = array_merge(array("p.id as id"),$arr['propNamesDef']);
+			foreach ($arr['propNamesDefld'] as $pd)
+				$propNames[] = $pd;
+			foreach ($arr['propNamesld'] as $p)
+				$propNames[] = $p;
+			
+			$propNames = array_merge($propNames,$arr['propNames']);
+		}
 		
 		$selQ = new selectSQL($conn);
-		$selQ->select = array("*");
+		$selQ->select = $propNames;
 		if (isset($_POST['id'])) {
 			$selQ->where = "id = ".$conn->real_escape_string($_POST['id']);
 		} else {
@@ -313,10 +330,10 @@
 				$selQ->joins[] = "p.id = products_".$i.".infoid";
 				$selQ->joinTypes[] = "LEFT JOIN";
 			}
-			while ($r = $GLOBALS['langResult']->fetch_assoc()) {
-				if (checkTable($conn, "products_".$i."_".$r['abreviation'])) {
-					$selQ->tableNames[] = "products_".$i."_".$r['abreviation'];
-					$selQ->joins[] = "p.id = products_".$i."_".$r['abreviation'].".infoid";
+			foreach ($langArr as $l) {
+				if (checkTable($conn, "products_".$i."_".$l)) {
+					$selQ->tableNames[] = "products_".$i."_".$l;
+					$selQ->joins[] = "p.id = products_".$i."_".$l.".infoid";
 					$selQ->joinTypes[] = "LEFT JOIN";
 				}
 			}
@@ -335,10 +352,20 @@
 		
 	}
 
-	function getPropsForCat($conn,$catid) {
-	
+	function getPropsForCat($conn,$catid,$langArr = null) {
+		
 		$propNamesDef = array("catid","price","qty","imgurl");
-		$propNamesDefld = array("names","desc");
+		$propNamesDefldtemp = array("names","desc");
+		
+		
+		if (isset($langArr)) {
+			$propNamesDefld = array();
+			foreach ($propNamesDefldtemp as $tmp)
+				foreach ($langArr as $lan)
+					$propNamesDefld[] = $tmp.$lan;
+		} else 
+			$propNamesDefld = $propNamesDefldtemp;
+		
 		$propNames = array();
 		$propNamesld = array();
 		
@@ -352,7 +379,7 @@
 		$selQ->tableNames = array("props_to_prods as ptp","properties as p");
 		$selQ->joins = array("p.id = ptp.propid");
 		$selQ->joinTypes = array("INNER JOIN");
-		$selQ->select = array("p.name as propName", "p.langDependant as ld");
+		$selQ->select = array("p.name as propName", "p.langDependant as ld", "p.name".$GLOBALS['language']." as `langName`");
 		$selQ->where = "ptp.catid = '".$catid."'";
 		if (!$selQ->executeQuery()) {
 			$GLOBALS['statusMessage'] = $selQ->status;
@@ -360,7 +387,15 @@
 		} elseif ($selQ->getNumberOfResults() == 0) {
 			$GLOBALS['statusMessage'] = makeStatusMessage(234, "error", "No properties to select");
 			return null;
-		} else
+		} elseif (isset($langArr)) {
+			while ($r = $selQ->result->fetch_assoc())
+				if ($r['ld'])
+					foreach ($langArr as $lan)
+						$propNamesld[] = $r['propName'].$lan." as `".$r['langName']."`";
+				else
+					$propNames[] = $r['propName']." as `".$r['langName']."`";
+			
+		} else 
 			while ($r = $selQ->result->fetch_assoc())
 				if ($r['ld'])
 					$propNamesld[] = $r['propName'];

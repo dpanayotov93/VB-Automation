@@ -54,7 +54,7 @@
 		$updQ->where = "id = '".$id."'";
 		while ($row = $GLOBALS['langResult']->fetch_assoc()) {
 			if (isset($_POST['names'][$row['abreviation']])) 
-				$updQ->update .= "name".$row['abreviation']." = '".$conn->real_escape_string($_POST['names'][$row['abreviation']]."',");
+				$updQ->update .= "name".$row['abreviation']." = '".$conn->real_escape_string($_POST['names'][$row['abreviation']])."',";
 			if (isset($_POST['desc'][$row['abreviation']])) 
 				$updQ->update .= "desc".$row['abreviation']." = '".$conn->real_escape_string($_POST['desc'][$row['abreviation']])."',";
 		}

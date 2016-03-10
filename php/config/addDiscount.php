@@ -3,7 +3,7 @@
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) 
 		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
-	else if (!(isset($_POST["catid"]) || isset($_POST["prodid"]) || isset($_POST['flat']) || (isset($_POST['percent']) && isset($_POST['minprice'])))) {
+	else if (!(isset($_POST["catid"]) || isset($_POST["prodid"])) || !(isset($_POST['flat']) || (isset($_POST['percent']) && isset($_POST['minprice'])))) {
 		$discounts = array();
 		$selQ = new selectSQL($conn);
 		
