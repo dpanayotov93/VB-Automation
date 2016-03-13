@@ -15,16 +15,23 @@
 	
 	$userid = $conn->real_escape_string($_POST['userid']);
 	$prodids = array();
-	foreach ($_POST['products'] as $p)
-		$prodids[] = $p;
+	$prodQuantity = array();
+	foreach ($_POST['products'] as $pid => $q) {
+		$pid = $conn->real_escape_string($pid);
+		$prodids[] = $pid;
+		if (!is_int($q) || $q < 1)
+			$q = 1;
+		$prodQuantity[$pid] = $q;
+		
+	}	
 	
 	$selQ = new selectSQL($conn);
 	$selQ->distinct = true;
-	$selQ->select = array("name".$language." as name","IF(dp.flat, dp.flat, dc.flat) as flat","IF(dp.percent, dp.percent, dc.percent) as percent","IF(dp.minprice, dp.minprice, dc.minprice) as minprice","p.price as price");
+	$selQ->select = array("p.id as prodid","name".$language." as name","IF(dp.flat, dp!.flat, dc.flat) as flat","IF(dp.percent, dp.percent, dc.percent) as percent","IF(dp.minprice, dp.minprice, dc.minprice) as minprice","p.price as price");
 	$selQ->tableNames = array("products as p","discounts as dp","discounts as dc");
 	$selQ->joinTypes = array("LEFT OUTER JOIN","LEFT OUTER JOIN");
 	$selQ->joins = array("p.id = dc.productid","p.catid = dp.categoryid");
-	$selQ->where = "p.id IN (".arrToQueryString($p, true).")";
+	$selQ->where = "p.id IN (".arrToQueryString($prodids, true).")";
 	
 	if (!$selQ->executeQuery()) {
 		$statusMessage = $selQ->status;
@@ -39,12 +46,12 @@
 
 	$productInfo = array();
 	while ($r = $selQ->result->fetch_assoc()) {
+		$r['price'] *= $prodQuantity[$r['prodid']];
 		if (!empty($r['percent']))
 			$r['price'] *= $r['percent']/100;
 		if (!empty($r['flat']) AND $r['price'] > $r['minprice'])
 			$r['price'] -= $r['flat'];  
 		$productInfo[] = array($nameLang[$language] => $r['name'],$priceLang[$language] => $r['price']);
-		
 	}
 	
 	$payment = $conn->real_escape_string($_POST['payment']);
@@ -77,7 +84,7 @@
 	foreach ($productInfo as $prod) {
 		unset($insQ);
 		$insQ = new insertSQL($conn);
-		$insQ->cols = array("orderid","productid");
+		$insQ->cols = array("orderid","productid","productcount");
 		$insQ->insertData = array($lastID,$prod);
 		$insQ->tableName = "ordered_products";
 		

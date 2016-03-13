@@ -3,7 +3,15 @@
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) 
 		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
-	else if (!(isset($_POST["catid"]) || isset($_POST["prodid"])) || !(isset($_POST['flat']) || (isset($_POST['percent']) && isset($_POST['minprice'])))) {
+	else if (isset($_POST['delete']) && isset($_POST['discountid'])) {
+		$delQ = new deleteSQL($conn);
+		$delQ->tableName = "discounts";
+		$delQ->where = "id = ".$conn->real_escape_string($_POST['discountid']);
+		if (!$delQ->executeQuery())
+			$statusMessage = $delQ->status;
+		else 
+			$statusMessage = makeStatusMessage(234, "success", "Discount deteled.");
+	}else if (!(isset($_POST["catid"]) || isset($_POST["prodid"])) || !(isset($_POST['flat']) || isset($_POST['percent']))) {
 		$discounts = array();
 		$selQ = new selectSQL($conn);
 		
@@ -41,29 +49,54 @@
 	} else if (isset($_POST['discountid'])) {
 		$delQ = new deleteSQL($conn);
 		$delQ->tableName = "discounts";
-		if (isset($_POST['delete'])) {
-			$delQ->where = "id = ".$conn->real_escape_string($_POST['discountid']);
-			if (!$delQ->executeQuery())
-				$statusMessage = $delQ->status;
-			else 
-				$statusMessage = makeStatusMessage(234, "success", "Discount deteled.");
-		} else {
-			$updQ = new updateSQL($conn);
-			$updQ->update = "userid='".$conn->real_escape_string($_POST['userid'])."',categoryid='".$conn->real_escape_string($_POST['catid'])."',productid='".$conn->real_escape_string($_POST['prodid'])."',flat='".$conn->real_escape_string($_POST['flat'])."',percent='".$conn->real_escape_string($_POST['percent'])."',minprice='".$conn->real_escape_string($_POST['minprice'])."'";
-			$updQ->where = "id = ".$conn->real_escape_string($_POST['discountid']);
-			if ($updQ->executeQuery())
-				$statusMessage = makeStatusMessage(2234, "success", "Data successfully added.");
-			else
-				$statusMessage = $updQ->status;
-		}
+		$updQ = new updateSQL($conn);
+		$updQ->update = "userid='".$conn->real_escape_string($_POST['userid'])."',categoryid='".$conn->real_escape_string($_POST['catid'])."',productid='".$conn->real_escape_string($_POST['prodid'])."',flat='".$conn->real_escape_string($_POST['flat'])."',percent='".$conn->real_escape_string($_POST['percent'])."',minprice='".$conn->real_escape_string($_POST['minprice'])."'";
+		$updQ->where = "id = ".$conn->real_escape_string($_POST['discountid']);
+		if ($updQ->executeQuery())
+			$statusMessage = makeStatusMessage(2234, "success", "Data successfully added.");
+		else
+			$statusMessage = $updQ->status;
 	} else if (isset($_POST['userid'])) {
 		$insQ = new insertSQL($conn);
-		$insQ->insertData = array($conn->real_escape_string($_POST['userid']),$conn->real_escape_string($_POST['catid']),$conn->real_escape_string($_POST['prodid']),$conn->real_escape_string($_POST['flat']),$conn->real_escape_string($_POST['percent']),$conn->real_escape_string($_POST['minprice']));
-		$insQ->cols = array("userid","categoryid","productid","flat","percent","minprice");
-		if ($insQ->executeQuery())
+		$insQ->tableName = "discounts";
+		$insQ->insertData = array($conn->real_escape_string($_POST['userid']));
+		$insQ->cols = array("userid");
+
+		if (!empty($_POST['catid'])) {
+			$insQ->insertData[] = $conn->real_escape_string($_POST['catid']);
+			$insQ->cols[] = "categoryid";
+		}
+		if (!empty($_POST['flat'])) {
+			$insQ->insertData[] = $conn->real_escape_string($_POST['flat']);
+			$insQ->cols[] = "flat";
+		}
+		if (!empty($_POST['percent'])) {
+			$insQ->insertData[] = $conn->real_escape_string($_POST['percent']);
+			$insQ->cols[] = "percent";
+		}
+		if (!empty($_POST['minprice'])) {
+			$insQ->insertData[] = $conn->real_escape_string($_POST['minprice']);
+			$insQ->cols[] = "minprice";
+		}
+		if (isset ($_POST['prodid']) && count($_POST['prodid'])) {
+			$insCount = count($insQ->insertData);
+			foreach ($_POST['prodid'] as $pid) {
+				$insQ->insertData[$insCount] = $conn->real_escape_string($pid);
+				$insQ->cols[$insCount] = "productid";
+				if (!$insQ->executeQuery()) {
+					$statusMessage = $insQ->status;
+					$error = 1;
+				}
+			}
+		} else {
+			if (!$insQ->executeQuery()) {
+				$statusMessage = $insQ->status;
+				$error = 1;
+			}
+		}
+		if (!isset($error))
 			$statusMessage = makeStatusMessage(2234, "success", "Data successfully added.");
-		else 
-			$statusMessage = $insQ->status;
+
 	} else 
 		$statusMessage = makeStatusMessage(14, "error", "Incomplete query request.");
 	
