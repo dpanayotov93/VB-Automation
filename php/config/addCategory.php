@@ -99,20 +99,20 @@
 		while ($row = $GLOBALS['langResult']->fetch_assoc()) {
 			$langAbr[] = $row['abreviation'];
 			if (isset($_POST['names'][$row['abreviation']])) {
-				$insQ->insertData[] = $_POST['names'][$row['abreviation']];
+				$insQ->insertData[] = $conn->real_escape_string($_POST['names'][$row['abreviation']]);
 				$insQ->cols[] = "name".$row['abreviation'];
 			}
 			if (isset($_POST['desc'][$row['abreviation']])) {
-				$insQ->insertData[] = $_POST['desc'][$row['abreviation']];
+				$insQ->insertData[] = $conn->real_escape_string($_POST['desc'][$row['abreviation']]);
 				$insQ->cols[] = "desc".$row['abreviation'];
 			}
 		}
 		if (isset($_POST['imgUrl'])) {
-			$insQ->insertData[] = $_POST['imgUrl'];
+			$insQ->insertData[] = $conn->real_escape_string($_POST['imgUrl']);
 			$insQ->cols[] = "imgurl";
 		}
 		if (isset($_POST['parentid'])) {
-			$insQ->insertData[] = $_POST['parentid'];
+			$insQ->insertData[] = $conn->real_escape_string($_POST['parentid']);
 			$insQ->cols[] = "parentid";
 		}
 		
@@ -202,7 +202,7 @@
 					$insQ->cols = array ("catid", "propid");
 					$insQ->tableName = "props_to_prods";
 					foreach ($_POST['fid'] as $f) {
-						$insQ->insertData = array($catid,$f);
+						$insQ->insertData = array($catid,$conn->real_escape_string($f));
 						if (!$insQ->executeQuery())
 							$resultAddProps = true; 
 					}

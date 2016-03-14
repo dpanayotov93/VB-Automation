@@ -54,18 +54,15 @@
 
 	$whereFilters = "visible = 1 AND ";
 	if (isset($_POST['filters'])) 
-		foreach ($_POST['filters'] as $key => $filter) {
-			$key = $conn->real_escape_string($key);
-			$filter = $conn->real_escape_string($filter);
-			if (!empty($filter)) {
-				$whereFilters .=  $key."='".$filter."' AND ";
-			}
-		}
+		for ($i = 0; $i < count($propLangName); $i++)
+			if (!empty($_POST['filters'][$propLangName[$i]]))
+				$whereFilters .=  $propNames[$i]."='".$conn->real_escape_string($_POST['filters'][$propLangName[$i]])."' AND ";
+		
 	if (isset($_POST['searchFilter'])) {
 		$whereFilters .= "(";
 		$searchFilter = $conn->real_escape_string($_POST['searchFilter']);
 		foreach ($propNames as $p)
-			$whereFilters .= $p ." LIKE '%".$searchFilter."%' OR ";
+			$whereFilters .= "`".$p ."` LIKE '%".$searchFilter."%' OR ";
 		$whereFilters = substr($whereFilters, 0, -4);
 		$whereFilters .= ")";
 	} else 
@@ -88,29 +85,33 @@
 	$selQ->where = $whereFilters;
 	
 	$dataF = array();
-	foreach ($propNames as $p) {
-		if (!isset($_POST['filters'][$p])) {
+	for ($i=0;$i<count($propNames);$i++)  {
+		if (!isset($_POST['filters'][$propNames[$i]])) {
 			$selQ->distinct = true;
-			$selQ->select = array($p);
+			$selQ->select = array($propNames[$i]." as `".$propLangName[$i]."`");
 			if (!$selQ->executeQuery()) {
 				$statusMessage = $selQ->status;
 				mysqli_close($conn);
 				return;
 			}
-			if ($selQ->executeQuery() != 0) {
+			if ($selQ->executeQuery()) {
 				$filters = array();
 				while ($row = $selQ->result->fetch_assoc())
-					$filters[] = $row[$p];
-				$dataF[] = array("name" => $p, $p => $filters);
+					$filters[] = $row[$propLangName[$i]];
+				$dataF[] = array("name" => $propLangName[$i], $propLangName[$i] => $filters);
 			}
 		} else 
-			$dataF[] = array("name" => $p, $p => array($_POST['filters'][$p]));
+			$dataF[] = array("name" => $propNames[$i], $propNames[$i] => array($conn->real_escape_string($_POST['filters'][$propNames[$i]])));
 	}
-
+	
+	$price = array("EN" => "Price","BG" => "Цена");
+	$imgurl = array("EN" => "Image","BG" => "Снимка");
+	$nameLang = array("EN" => "Name","BG" => "Име");
+	
 	$selQ->distinct = false;
-	$selQ->select = array("imgurl as Image");
-	$selQ->select[] = "names".$language." as Name"; //fix with db for default props
-	$selQ->select[] = "price as Price";//fix with db for default props
+	$selQ->select = array("imgurl as ".$imgurl[$language]);
+	$selQ->select[] = "names".$language." as ".$nameLang[$language]; //fix with db for default props
+	$selQ->select[] = "price as ".$price[$language];//fix with db for default props
 	$cleanProps = array();
 	for ($i=0;$i<count($propNames);$i++) 
 		$selQ->select = array_merge($selQ->select,array($propNames[$i]." as `".$propLangName[$i]."`"));

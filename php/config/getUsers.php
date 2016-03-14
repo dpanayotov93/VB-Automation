@@ -27,6 +27,12 @@
 		$selQ->joinTypes[] = "LEFT JOIN";
 	}
 	
+	if (isset($_POST['countPerPage']) && is_int($_POST['countPerPage']))
+		if (isset($_POST['page']) && is_int($_POST['page']))
+			$selQ->limit = ($_POST['countPerPage'] - 1)*$_POST['page'].",".$_POST['countPerPage'];
+			else
+				$selQ->limit = $conn->real_escape_string($_POST['countPerPage']);
+	
 	if (!$selQ->executeQuery()) {
 		$statusMessage = $selQ->status;
 		mysqli_close($conn);

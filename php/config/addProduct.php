@@ -132,8 +132,12 @@
 
 	function insProd($conn) {
 		$catid = $conn->real_escape_string($_POST['catid']);
+
+		$langArr = array();
+		while($l = $GLOBALS['langResult']->fetch_assoc())
+			$langArr[] = $l['abreviation'];
 		
-		$arr = getPropsForCat($conn,$catid);
+		$arr = getPropsForCat($conn,$catid, null, $langArr);
 		if (!$arr)
 			return;
 		
@@ -141,10 +145,6 @@
 		$propNamesDefld =  $arr['propNamesDefld'];
 		$propNames = $arr['propNames'];
 		$propNamesld = $arr['propNamesld'];
-
-		$langArr = array();
-		while($l = $GLOBALS['langResult']->fetch_assoc())
-			$langArr[] = $l['abreviation'];
 		
 		$insQdef = new insertSQL($conn);
 		$insQdef->tableName = "products";
@@ -187,9 +187,11 @@
 			$insQ->insertData = array();
 			$insQ->insertData[] = $infoID;
 			foreach ($propNames as $pn)
-				if (isset($_POST[$pn])) {
-					$insQ->cols[] = $pn;
-					$insQ->insertData[] = $conn->real_escape_string($_POST[$pn]);
+				$tmpArr = explode(" as ", $pn); //0 is what to insert, 1 is what to listen for
+				$tmpArr[1] = str_replace(" ", "_", trim($tmpArr[1], "`"));
+				if (isset($_POST[$tmpArr[1]])) {
+					$insQ->cols[] = $tmpArr[0];
+					$insQ->insertData[] = $conn->real_escape_string($_POST[$tmpArr[1]]);
 				}
 			
 			if (!$insQ->executeQuery()) {
@@ -204,9 +206,11 @@
 				$insQld->cols = array("infoid");
 				$insQld->insertData = array($infoID);
 				foreach ($propNamesld as $p)
-					if (isset($_POST[$p][$l])) {
-						$insQld->cols[] = $p.$l;
-						$insQld->insertData[] = $conn->real_escape_string($_POST[$p][$l]);
+					$tmpArr = explode(" as ", $p); //0 is what to insert, 1 is what to listen for
+					$tmpArr[1] = str_replace(" ", "_", trim($tmpArr[1], "`"));
+					if (isset($_POST[$tmpArr[1]][$l])) {
+						$insQld->cols[] = $tmpArr[0].$l;
+						$insQld->insertData[] = $conn->real_escape_string($_POST[$tmpArr[1]][$l]);
 					}
 				if (!$insQld->executeQuery()) {
 					$GLOBALS['statusMessage'] = $insQld->status;
@@ -352,9 +356,9 @@
 		
 	}
 
-	function getPropsForCat($conn,$catid,$langArr = null) {
+	function getPropsForCat($conn,$catid,$langArr = null,$insertQueryLangArr = null) {
 		
-		$propNamesDef = array("catid","price","qty","imgurl");
+		$propNamesDef = array("catid","price","qty","imgurl","promo");
 		$propNamesDefldtemp = array("names","desc");
 		
 		
@@ -368,6 +372,9 @@
 		
 		$propNames = array();
 		$propNamesld = array();
+		
+		if (isset($insertQueryLangArr))
+			$langArr = $insertQueryLangArr;
 		
 		$conn = sqlConnectDefault();
 		if(is_null($conn)) {
@@ -390,8 +397,11 @@
 		} elseif (isset($langArr)) {
 			while ($r = $selQ->result->fetch_assoc())
 				if ($r['ld'])
-					foreach ($langArr as $lan)
-						$propNamesld[] = $r['propName'].$lan." as `".$r['langName']."`";
+					if (isset($insertQueryLangArr))
+						$propNamesld[] = $r['propName']." as `".$r['langName']."`";
+					else
+						foreach ($langArr as $lan)
+							$propNamesld[] = $r['propName'].$lan." as `".$r['langName']."`";
 				else
 					$propNames[] = $r['propName']." as `".$r['langName']."`";
 			
