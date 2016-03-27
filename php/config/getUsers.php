@@ -2,12 +2,19 @@
 
 	$conn = sqlConnectDefault();	
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
 
 	if (!$_POST['show']) {
-		$statusMessage = makeStatusMessage(1243, "error", "Incomplete quiery request.");
+		$statusMessage = makeStatusMessage(4, "error");
+		return;
+	}
+	
+	$user = getUser($conn);
+	if ($user['access'] != 3) {
+		$statusMessage = makeStatusMessage(3,"error");
+		mysqli_close($conn);
 		return;
 	}
 	
@@ -39,7 +46,7 @@
 		return;
 	}
 	if ($selQ->getNumberOfResults() < 1) {
-		$statusMessage = makeStatusMessage(123, "error", "No users to show");
+		$statusMessage = makeStatusMessage(50, "error");
 		mysqli_close($conn);
 		return;
 	}
@@ -55,7 +62,7 @@
 		$data[] = $row;
 	}
 
-	$statusMessage = makeStatusMessage(123, "success", "User info sent.");
+	$statusMessage = makeStatusMessage(20, "success");
 	mysqli_close($conn);
 	return;
 		

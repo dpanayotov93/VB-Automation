@@ -2,16 +2,24 @@
 
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
 	
 	$langResult = getLanguages($conn);
 	if (is_null($langResult)) {
-		$statusMessage = makeStatusMessage(324, "error", "Could not get language information.");
+		$statusMessage = makeStatusMessage(2, "error");
 		mysqli_close($conn);
 		return;
 	}
+	
+	$user = getUser($conn);
+	if ($user['access'] != 3) {
+		$statusMessage = makeStatusMessage(3,"error");
+		mysqli_close($conn);
+		return;
+	}
+	
 	if (isset($_POST['show'])) 
 		getProds($conn);
 	elseif (isset($_POST['id'])) {
@@ -43,7 +51,7 @@
 		if (!$updQ->executeQuery())
 			$GLOBALS['statusMessage'] = $updQ->status;
 		else 
-			$GLOBALS['statusMessage'] = makeStatusMessage(123123, "success", "Product updated.");
+			$GLOBALS['statusMessage'] = makeStatusMessage(42, "success");
 	}
 
 	function updProd($conn) {
@@ -127,7 +135,7 @@
 			}
 		}
 		
-		$GLOBALS['statusMessage'] = makeStatusMessage(123123, "success", "Product updated.");
+		$GLOBALS['statusMessage'] = makeStatusMessage(32, "success");
 	}
 
 	function insProd($conn) {
@@ -219,7 +227,7 @@
 			}
 		}
 		
-		$GLOBALS['statusMessage'] = makeStatusMessage(234, "success", "Product added succesfully.");
+		$GLOBALS['statusMessage'] = makeStatusMessage(12, "success");
 	}
 
 	function getProdFields($conn) {
@@ -231,7 +239,7 @@
 			$GLOBALS['statusMessage'] = $selQ->status;
 			return;
 		} elseif ($selQ->getNumberOfResults() == 0) {
-			$GLOBALS['statusMessage'] = makeStatusMessage(34, "error", "No properties for this category.");
+			$GLOBALS['statusMessage'] = makeStatusMessage(53, "error");
 			return;
 		}
 		
@@ -248,7 +256,7 @@
 			$GLOBALS['statusMessage'] = $selQ->status;
 			return;
 		} elseif ($selQ->getNumberOfResults() == 0) {
-			$GLOBALS['statusMessage'] = makeStatusMessage(34, "error", "No properties to select.");
+			$GLOBALS['statusMessage'] = makeStatusMessage(53, "error");
 			return;
 		}
 		$def = array();
@@ -271,7 +279,7 @@
 				$def = array_merge($def, array($r['name'] => $r['name']));
 		
 		$GLOBALS['data'] = $def;
-		$GLOBALS['statusMessage'] = makeStatusMessage(2142, "success", "Properties sent successfully.");
+		$GLOBALS['statusMessage'] = makeStatusMessage(23, "success");
 	}
 
 	function getProds($conn) {
@@ -290,7 +298,7 @@
 				return;
 			}
 			if ($selQ->getNumberOfResults() == 0) {
-				$GLOBALS['statusMessage'] = makeStatusMessage(123, "error", "No categories to select.");
+				$GLOBALS['statusMessage'] = makeStatusMessage(51, "error");
 				return;
 			}
 			while ($r = $selQ->result->fetch_assoc())
@@ -352,7 +360,7 @@
 			$data[] = $r;
 		
 		$GLOBALS['data'] = $data;
-		$GLOBALS['statusMessage'] = makeStatusMessage(234, "success", "Products printed successfully.");
+		$GLOBALS['statusMessage'] = makeStatusMessage(22, "success");
 		
 	}
 
@@ -378,7 +386,7 @@
 		
 		$conn = sqlConnectDefault();
 		if(is_null($conn)) {
-			$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+			$statusMessage = makeStatusMessage(1,"error");
 			return;
 		}
 
@@ -392,7 +400,7 @@
 			$GLOBALS['statusMessage'] = $selQ->status;
 			return null;
 		} elseif ($selQ->getNumberOfResults() == 0) {
-			$GLOBALS['statusMessage'] = makeStatusMessage(234, "error", "No properties to select");
+			$GLOBALS['statusMessage'] = makeStatusMessage(53, "error");
 			return null;
 		} elseif (isset($langArr)) {
 			while ($r = $selQ->result->fetch_assoc())

@@ -1,8 +1,16 @@
 <?php
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) { 
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
-	} elseif (isset($_POST['showProps'])) {
+		$statusMessage = makeStatusMessage(1,"error");
+	} 
+	$user = getUser($conn);
+	if ($user['access'] != 3) {
+		$statusMessage = makeStatusMessage(3,"error");
+		mysqli_close($conn);
+		return;
+	}
+	
+	elseif (isset($_POST['showProps'])) {
 		getProps($conn);
 	} elseif (isset($_POST['id'])) {
 		if (isset($_POST['delete']))
@@ -25,7 +33,7 @@
 	function updProp($conn) {
 		$langArray = getLanguages($conn);
 		if (is_null($langArray)) {
-			$statusMessage = makeStatusMessage(324, "error", "Could not get language information.");
+			$statusMessage = makeStatusMessage(2, "error");
 			mysqli_close($conn);
 			return;
 		}
@@ -49,7 +57,7 @@
 		if (!$updQ->executeQuery())
 			$statusMessage = $updQ->status;
 		else
-			$statusMessage = makeStatusMessage(1234, "suscces", "Property updated successfully.");
+			$statusMessage = makeStatusMessage(33, "suscces");
 		$GLOBALS['statusMessage'] = $statusMessage;
 	}
 	
@@ -61,12 +69,12 @@
 		$selQ->where = "name = '".$propName."'";
 		$selQ->executeQuery();
 		if ($selQ->getNumberOfResults() > 0) {
-			$statusMessage = makeStatusMessage(234, "error", "Propery with that name already exist.");
+			$statusMessage = makeStatusMessage(102, "error");
 			return;
 		}
 		$langArray = getLanguages($conn);
 		if (is_null($langArray)) {
-			$statusMessage = makeStatusMessage(324, "error", "Could not get language information.");
+			$statusMessage = makeStatusMessage(2, "error");
 			mysqli_close($conn);
 			return;
 		}
@@ -97,7 +105,7 @@
 		if (!$insQ->executeQuery())
 			$statusMessage = $insQ->status;
 		else
-			$statusMessage = makeStatusMessage(1234, "suscces", "Property saved successfully.");
+			$statusMessage = makeStatusMessage(13, "suscces");
 		$GLOBALS['statusMessage'] = $statusMessage;
 	}
 	
@@ -113,14 +121,14 @@
 		if (!$updQ->executeQuery())
 			$statusMessage = $updQ->sqlQuery;
 		else
-			$statusMessage = makeStatusMessage(1234, "suscces", "Property deleted successfully.");
+			$statusMessage = makeStatusMessage(43, "suscces");
 		$GLOBALS['statusMessage'] = $statusMessage;
 	}
 	
 	function getPropFields($conn) {
 		$langArray = getLanguages($conn);
 		if (is_null($langArray))
-			$statusMessage = makeStatusMessage(324, "error", "Could not get language information.");
+			$statusMessage = makeStatusMessage(2, "error");
 		else {
 			$data = array("Unique name" => "name");
 			while($row = $langArray->fetch_assoc()) {
@@ -129,7 +137,7 @@
 			}
 			$tmp = array("Appears in filters" => "searchable","Differs in languages" => "langDependant");
 			$data = array("input" => $data,"checkbox" => $tmp);
-			$statusMessage = makeStatusMessage(12342, "success", "Language info sent!");
+			// $statusMessage = makeStatusMessage(29, "success");
 		}
 		$GLOBALS['data'] = $data;
 		$GLOBALS['statusMessage'] = $statusMessage;
@@ -149,11 +157,11 @@
 		if (!$selQ->executeQuery())
 			$statusMessage = $selQ->sqlQuery;
 		elseif ($selQ->getNumberOfResults() == 0) {
-			$statusMessage = makeStatusMessage(234, "error", "Nothing to select from database.");
+			$statusMessage = makeStatusMessage(59, "error");
 		} else {
 			while ($row = $selQ->result->fetch_assoc())
 				$data[] = $row;
-			$statusMessage = makeStatusMessage(15,"success","Data gathered succesfully.");
+			$statusMessage = makeStatusMessage(23,"success");
 			$GLOBALS['data'] = $data;
 		}
 		$GLOBALS['statusMessage'] = $statusMessage;

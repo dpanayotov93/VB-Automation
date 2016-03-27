@@ -2,13 +2,20 @@
 
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
 	
 	$langResult = getLanguages($conn);
 	if (is_null($langResult)) {
-		$statusMessage = makeStatusMessage(324, "error", "Could not get language information.");
+		$statusMessage = makeStatusMessage(2, "error");
+		mysqli_close($conn);
+		return;
+	}
+	
+	$user = getUser($conn);
+	if ($user['access'] != 3) {
+		$statusMessage = makeStatusMessage(3,"error");
 		mysqli_close($conn);
 		return;
 	}
@@ -42,7 +49,7 @@
 		if (!$updQ->executeQuery())
 			$statusMessage = $updQ->sqlQuery;
 		else
-			$statusMessage = makeStatusMessage(1234, "suscces", "Category deleted successfully.");
+			$statusMessage = makeStatusMessage(41, "suscces");
 		$GLOBALS['statusMessage'] = $statusMessage;
 	}
 	
@@ -68,7 +75,7 @@
 		if (!$updQ->executeQuery())
 			$statusMessage = $updQ->status;
 		else
-			$statusMessage = makeStatusMessage(1234, "suscces", "Category updated successfully.");
+			$statusMessage = makeStatusMessage(41, "suscces");
 		$GLOBALS['statusMessage'] = $statusMessage;
 	}
 	
@@ -79,7 +86,7 @@
 			$data = array_merge($data,array("Discription ".$row["abreviation"] => "desc[".$row["abreviation"]."]"));
 		}
 		$data = array_merge($data,array("Link to image" => "imgurl"));
-		$statusMessage = makeStatusMessage(12342, "success", "Info sent!");
+		$statusMessage = makeStatusMessage(21, "success");
 		$GLOBALS['data'] = $data;
 		$GLOBALS['statusMessage'] = $statusMessage;
 	}
@@ -147,7 +154,7 @@
 				$selQ->where = "id IN (".arrToQueryString($tmp,null).")";
 				
 				if (!$selQ->executeQuery() OR $selQ->getNumberOfResults() == 0)
-					$statusMessage = makeStatusMessage(234, "error", "Error getting category properties.");
+					$statusMessage = makeStatusMessage(53, "error");
 				else {
 					$propsDef = array();
 					$propsLang = array();
@@ -208,9 +215,9 @@
 					}
 					
 					if (isset($resultAddProps))
-						$statusMessage = makeStatusMessage(3,"error","Could not assign properties to category.");
+						$statusMessage = makeStatusMessage(103,"error");
 					else
-						$statusMessage = makeStatusMessage(21,"success","Category successfully added!");
+						$statusMessage = makeStatusMessage(11,"success");
 					
 				}
 			}

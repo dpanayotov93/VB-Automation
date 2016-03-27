@@ -1,19 +1,28 @@
 <?php
 	if (!isset($_POST["userid"]) OR !isset($_POST['products']) OR !count($_POST['products'])) {
-		$statusMessage = makeStatusMessage(2,"error","Incomplete query request...");
+		$statusMessage = makeStatusMessage(4,"error");
 		return;
 	}
 	
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
+		return;
+	}
+	$userid = $conn->real_escape_string($_POST['userid']);
+	$user = getUser($conn);
+	if ($user['id'] != $userid) {
+		$statusMessage = makeStatusMessage(3,"error");
+		mysqli_close($conn);
 		return;
 	}
 	
-	$nameLang = array("EN" => "Product","BG" => "Продукт");
-	$PriceLang = array("EN" => "Price","BG" => "Цена");
+
+	require_once 'orderVariables.php';
 	
-	$userid = $conn->real_escape_string($_POST['userid']);
+	$nameLang = array("EN" => "Product","BG" => "Продукт");
+	$priceLang = array("EN" => "Price","BG" => "Цена");
+	
 	$prodids = array();
 	$prodQuantity = array();
 	foreach ($_POST['products'] as $pid => $q) {
@@ -27,10 +36,10 @@
 	
 	$selQ = new selectSQL($conn);
 	$selQ->distinct = true;
-	$selQ->select = array("p.id as prodid","name".$language." as name","IF(dp.flat, dp!.flat, dc.flat) as flat","IF(dp.percent, dp.percent, dc.percent) as percent","IF(dp.minprice, dp.minprice, dc.minprice) as minprice","p.price as price");
+	$selQ->select = array("p.id as prodid","names".$language." as name","IF(dp.flat, dp.flat, dc.flat) as flat","IF(dp.percent, dp.percent, dc.percent) as percent","IF(dp.minprice, dp.minprice, dc.minprice) as minprice","p.price as price");
 	$selQ->tableNames = array("products as p","discounts as dp","discounts as dc");
-	$selQ->joinTypes = array("LEFT OUTER JOIN","LEFT OUTER JOIN");
-	$selQ->joins = array("p.id = dc.productid","p.catid = dp.categoryid");
+	$selQ->joinTypes = array("LEFT JOIN","LEFT JOIN");
+	$selQ->joins = array("p.id = dp.productid","p.catid = dc.categoryid");
 	$selQ->where = "p.id IN (".arrToQueryString($prodids, true).")";
 	
 	if (!$selQ->executeQuery()) {
@@ -39,7 +48,7 @@
 		return;
 	}
 	if ($selQ->getNumberOfResults() < 1) {
-		$statusMessage = makeStatusMessage(2342, "error", "No products to select.");
+		$statusMessage = makeStatusMessage(52, "error");
 		mysqli_close($conn);
 		return;
 	}
@@ -53,12 +62,13 @@
 			$r['price'] -= $r['flat'];  
 		$productInfo[] = array($nameLang[$language] => $r['name'],$priceLang[$language] => $r['price']);
 	}
-	
-	$payment = $conn->real_escape_string($_POST['payment']);
-	$address = $conn->real_escape_string($_POST['address']);
+	$payment = ""; //wtf deg
+	$address = "";
+// 	$payment = $conn->real_escape_string($_POST['payment']);
+// 	$address = $conn->real_escape_string($_POST['address']);
 	$totalPrice = 0;
 	foreach ($productInfo as $pi) 
-		$totalPrice += $pi['price'];
+		$totalPrice += $pi[$priceLang[$language]];
 	
 	$insQ = new insertSQL($conn);
 	$insQ->cols = array("userid","payment","date","ip","address","totalprice");
@@ -72,7 +82,9 @@
 	}
 	
 	$selQlast = new selectSQL($conn);
-	$selQlast->select = array("LAST_INSERT_ID() as lastid");
+	$selQlast->select = array("id as lastid");
+	$selQlast->where = "id = LAST_INSERT_ID()";
+	$selQlast->tableNames = array("orders");
 	if (!$selQlast->executeQuery()) {
 		$statusMessage = $selQlast->status;
 		mysqli_close($conn);
@@ -95,7 +107,7 @@
 		}
 	}
 	
-	$statusMessage = makeStatusMessage(234, "success", "THE ORDER IS GIVEN!");
+	$statusMessage = makeStatusMessage(17, "success");
 	
 	mysqli_close($conn);
 	return;

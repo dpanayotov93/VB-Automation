@@ -30,7 +30,7 @@ abstract class basicSQL {
 		}
 			$this->makeQueryText();
 		debugMessages("Incomplete sql query parameters.".$this->sqlQuery,"debugSQL");
-		$this->status = makeStatusMessage(1,"error","Database error. Incorrect parameters. "+$this->sqlQuery);
+		$this->status = makeStatusMessage(5,"error"," Incorrect parameters. "+$this->sqlQuery);
 		return false;
 	}
 	
@@ -47,7 +47,7 @@ abstract class basicSQL {
 		if (empty(mysqli_error($this->conn)))
 			return false;
 		debugMessages(mysqli_error($this->conn), "debugSQL");
-		$this->status = makeStatusMessage(1,"error","Database error.");
+		$this->status = makeStatusMessage(5,"error");
 		return true;
 	} 	
 	

@@ -1,14 +1,20 @@
 <?php
 	if (!isset($_POST["email"]) || !isset($_POST["pass"])) {
-		$statusMessage = makeStatusMessage(2,"error","Incomplete query request...");
+		$statusMessage = makeStatusMessage(4,"error");
 		return;
 	}
 	
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
+	$user = getUser($conn);
+// 	if (isset($user) && $user['access'] != '3') {
+// 		$statusMessage = makeStatusMessage(12,"error", "Already logged in.");
+// 		mysqli_close($conn);
+// 		return;
+// 	}
 
 	$user = $conn->real_escape_string($_POST["email"]);
 	$pass = $conn->real_escape_string($_POST["pass"]);
@@ -25,7 +31,7 @@
 	}
 	
 	if ($selQ->getNumberOfResults() > 0) {
-		$statusMessage = makeStatusMessage(3,"error","User is already registered!");
+		$statusMessage = makeStatusMessage(13,"error");
 		mysqli_close($conn);
 		return;
 	}

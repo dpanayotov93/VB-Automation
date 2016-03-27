@@ -2,28 +2,23 @@
 	
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
-	
-	$adminCheck = 1; //implement admin check
 	
 	if (isset($_POST["userid"]))
 		$userid = $conn->real_escape_string($_POST['userid']);
 	
-	$user = array("EN" => "User","BG" => "Потребител");
-	$oid = array("EN" => "User","BG" => "Потребител");
-	$uid = array("EN" => "UserID","BG" => "UserID");
-	$payment = array("EN" => "Payment method","BG" => "Начин на плащане");
-	$date = array("EN" => "Date of order","BG" => "Дата на поръчка");
-	$ip = array("EN" => "Client IP address","BG" => "IP адрес на клиента");
-	$status = array("EN" => "Order status","BG" => "Статус на поръчката");
-	$address = array("EN" => "Reciever address","BG" => "Адрес за получаване");
-	$totalPrice = array("EN" => "Total price","BG" => "Обща стойност");
-
-	$product = array("EN" => "Product","BG" => "Продукт");
-	$pid = array("EN" => "ProductID","BG" => "ProductID");
+	$user = getUser($conn);
+	if ($user['access'] == 3)
+		$adminCheck = 1;
+ 	else if ($user['id'] != $userid) {
+		$statusMessage = makeStatusMessage(3,"error");
+		mysqli_close($conn);
+		return;
+	}
 	
+	require_once 'orderVariables.php';
 	
 	$selQ = new selectSQL($conn);
 	$selQ->tableNames = array("orders as o");
@@ -60,7 +55,7 @@
 		return;
 	}
 	if ($selQ->getNumberOfResults() < 1) {
-		$statusMessage = makeStatusMessage(2342, "error", "No orders to select.");
+		$statusMessage = makeStatusMessage(57, "error");
 		mysqli_close($conn);
 		return;
 	}
@@ -89,59 +84,8 @@
 		unset($productData);
 	}
 	
-	$statusMessage = makeStatusMessage(234, "success", "THE ORDER IS GIVEN!");
+	$statusMessage = makeStatusMessage(27, "success");
 	
 	mysqli_close($conn);
 	return;
-	
-	function getStatusOfOrder($o,$l) {
-		if ($l = "BG") 
-			switch ($o) {
-				case '0':
-					return "Неодобрена поръчка";
-				case '1':
-					return "Одобрена поръчка";
-				case '2':
-					return "Изпратена поръчка";
-			}
-		else if ($l = "EN")
-			switch ($o) {
-				case '0':
-					return "Unreviewed order";
-				case '1':
-					return "Reviewed order";
-				case '2':
-					return "Sent order";	
-			}
-	}
-	
-	function getDeliveryOptionOfOrder($o,$l) {
-		if ($l = "BG")
-			switch ($o) {
-				case '0':
-					return "Еконт";
-			}
-		else if ($l = "EN")
-			switch ($o) {
-				case '0':
-					return "Econt";	
-			}
-	}
-	
-	function getPaymentMethodOfOrder($o,$l) {
-		if ($l = "BG")
-			switch ($o) {
-				case '0':
-					return "Банков превод";
-				case '1':
-					return "Наложен платеж";
-			}
-		else if ($l = "EN")
-			switch ($o) {
-				case '0':
-					return "Bank transaction";
-				case '1':
-					return "Cash on delivery";
-			}
-	}
 ?>

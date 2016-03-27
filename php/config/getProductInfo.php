@@ -1,16 +1,18 @@
 <?php
 	if (!isset($_POST["id"])) {
-		$statusMessage = makeStatusMessage(2,"error","Incomplete query request...");
+		$statusMessage = makeStatusMessage(4,"error");
 		return;
 	}
 	
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
 	
 	$id = $conn->real_escape_string($_POST['id']);
+	
+	$user = getUser($conn);
 	
 	$selQ = new selectSQL($conn);
 	$selQ->select = array("catid");
@@ -24,7 +26,7 @@
 	}
 	
 	if ($selQ->getNumberOfResults() == 0) {
-		$statusMessage = makeStatusMessage(24,"error","Product not found!");
+		$statusMessage = makeStatusMessage(52,"error");
 		mysqli_close($conn);
 		return;
 	}
@@ -60,9 +62,13 @@
 	$nameLang = array("EN" => "Name","BG" => "Име");
 	
 	unset($selQ);
+	$selQ = new selectSQL($conn);
 	$selQ->select = array("imgurl as ".$imgurl[$language]);
 	$selQ->select[] = "names".$language." as ".$nameLang[$language]; //fix with db for default props
+	// if (isset($user['id']))
+		// show price
 	$selQ->select[] = "price as ".$price[$language];//fix with db for default props
+	$selQ->where = "p.id = '".$id."'";
 	$cleanProps = array();
 	for ($i=0;$i<count($propNames);$i++)
 		$selQ->select = array_merge($selQ->select,array($propNames[$i]." as `".$propLangName[$i]."`"));
@@ -86,12 +92,12 @@
 		return;
 	}
 	if ($selQ->getNumberOfResults() == 0)
-		$statusMessage = makeStatusMessage(25, "error", "Nothing to select.");
+		$statusMessage = makeStatusMessage(59, "error");
 	else {
 		$data = array();
 		while ($row = $selQ->result->fetch_assoc())
 			$data[] = $row;
-		$statusMessage = makeStatusMessage(15,"success","Data sent succesfully.");
+		$statusMessage = makeStatusMessage(22,"success");
 	}
 	mysqli_close($conn);
 

@@ -1,12 +1,12 @@
 <?php
 	if (!isset($_POST["searchValue"])) {
-		$statusMessage = makeStatusMessage(2,"error","Incomplete query request...");
+		$statusMessage = makeStatusMessage(4,"error");
 		return;
 	}
 	
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
 	
@@ -18,7 +18,7 @@
 		$result = simpleSelect($select, $tableNames, NULL, NULL, $where, NULL, NULL, $conn);
 		
 		if ($result->num_rows == 0) {
-			$statusMessage = makeStatusMessage(24,"error","Category not found!");
+			$statusMessage = makeStatusMessage(51,"error");
 			mysqli_close($conn);
 			return;
 		} else {
@@ -78,12 +78,12 @@
 	$tableNames = array ("products_".$conn->real_escape_string($_POST['id']));
 	$result = simpleSelect($select, $tableNames, NULL, NULL, $whereFilters, NULL, NULL, $conn);
 	if ($result->num_rows == 0)
-		$statusMessage = makeStatusMessage(25, "error", "Nothing to select.");
+		$statusMessage = makeStatusMessage(59, "error");
 	else {
 		$dataP = array();
 		while ($row = $result->fetch_assoc())
 			$dataP[] = $row;
-		$statusMessage = makeStatusMessage(15,"success","Data sent succesfully.");
+		$statusMessage = makeStatusMessage(29,"success");
 		$data = array("filters" => $dataF, "products" => $dataP);	
 	}
 	mysqli_close($conn);

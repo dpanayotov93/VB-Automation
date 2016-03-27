@@ -2,12 +2,19 @@
 
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
 	
 	if (empty($_POST['userid'])) {
-		$statusMessage = makeStatusMessage(1243, "error", "Incomplete quiery request.");
+		$statusMessage = makeStatusMessage(4, "error");
+		return;
+	}
+	$userid = $conn->real_escape_string($_POST['userid']);
+	$user = getUser($conn);
+	if ($user['id'] != $userid) {
+		$statusMessage = makeStatusMessage(3,"error");
+		mysqli_close($conn);
 		return;
 	}
 	
@@ -28,12 +35,12 @@
 			return;
 		}
 		
-		$statusMessage = makeStatusMessage(123, "success", "Favorite saved!");
+		$statusMessage = makeStatusMessage(15, "success");
 		
 	} else if (isset($_POST['remove']) && (!empty($_POST['productid']) || !empty($_POST['categoryid']))) {
 		$delQ = new deleteSQL($conn);
 		$delQ->tableName = "favorites";
-		$delQ->where = "userid = '".$conn->real_escape_string($_POST['userid'])."' AND ";
+		$delQ->where = "userid = '".$userid."' AND ";
 		if (isset($_POST['productid']))
 			$delQ->where .= "productid = ".$conn->real_escape_string($_POST['productid'])."'";
 		else if (isset($_POST['categoryid']))
@@ -46,14 +53,14 @@
 			return;
 		}
 
-		$statusMessage = makeStatusMessage(123, "success", "Favorite deleted!");
+		$statusMessage = makeStatusMessage(45, "success");
 	} else if (!empty($_POST['products']) || !empty($_POST['categories'])) {
 		$selQ = new selectSQL($conn);
 		$selQ->select = array ();
 		$selQ->tableNames = array("favorites as f");
 		$selQ->joins = array();
 		$selQ->joinTypes = array();
-		$selQ->where = "f.userid = ".$conn->real_escape_string($_POST['userid']);
+		$selQ->where = "f.userid = ".$userid;
 	
 		if (isset($_POST['products'])) {
 			$selQ->select[] = "p.names".$language." as `Product name`";
@@ -75,7 +82,7 @@
 			return;
 		}
 		if ($selQ->getNumberOfResults() < 1) {
-			$statusMessage = makeStatusMessage(123, "error", "No favorites to show");
+			$statusMessage = makeStatusMessage(55, "error");
 			mysqli_close($conn);
 			return;
 		}
@@ -84,7 +91,7 @@
 			$data[] = $row;
 	
 	
-		$statusMessage = makeStatusMessage(123, "success", "Favorites info sent.");
+		$statusMessage = makeStatusMessage(25, "success");
 	}
 	
 	mysqli_close($conn);

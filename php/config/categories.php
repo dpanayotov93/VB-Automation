@@ -3,9 +3,10 @@
 	$conn = sqlConnectDefault();
 	
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
+	$user = getUser($conn);
 	
 	if (!isset($language))
 		$language = $GLOBALS['language'];
@@ -19,7 +20,7 @@
 	if (isset($allLangs)) {
 		$langResult = getLanguages($conn);
 		if (is_null($langResult)) {
-			$statusMessage = makeStatusMessage(324, "error", "Could not get language information.");
+			$statusMessage = makeStatusMessage(2, "error");
 			mysqli_close($conn);
 			return;
 		}
@@ -31,9 +32,9 @@
 		$data = getCat($where,$conn,$GLOBALS['language'],null);
 	
 	if (empty($data))
-		$statusMessage = makeStatusMessage(23, "error", "No categories found.");
+		$statusMessage = makeStatusMessage(51, "error");
 	else
-		$statusMessage = makeStatusMessage(23, "success", "Data successfully gathered.");
+		$statusMessage = makeStatusMessage(21, "success");
 	
 	mysqli_close($conn);
 	return;

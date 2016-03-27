@@ -1,14 +1,16 @@
 <?php
+
+///?????????????????????????????????????????????
 	$conn = sqlConnectDefault();
 
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
 	
 	$result = getLanguages($conn);
 	if (is_null($result)) {
-		$statusMessage = makeStatusMessage(324, "error", "Could not get language information.");
+		$statusMessage = makeStatusMessage(2, "error");
 		mysqli_close($conn);
 		return;	
 	}
@@ -29,11 +31,11 @@
 	}
 	
 	if ($selQ->getNumberOfResults() == 0)
-		$statusMessage = makeStatusMessage(14,"error","Error getting data from database...");
+		$statusMessage = makeStatusMessage(53,"error");
 	else {
 		while ($row = $selQ->result->fetch_assoc())
 			$data[] = $row;
-		$statusMessage = makeStatusMessage(15,"success","Data gathered succesfully.");
+		$statusMessage = makeStatusMessage(23,"success");
 	}
 
 	mysqli_close($conn);

@@ -1,17 +1,22 @@
 <?php
 	if (!isset($_POST["user"])) {
-		$statusMessage = makeStatusMessage(2,"error","Incomplete query request...");
+		$statusMessage = makeStatusMessage(4,"error");
 		return;
 	}
 
+	$username = $conn->real_escape_string($_POST["user"]);
+	$user = getUser($conn);
+	if ($user['access'] != 3 && $user['name'] != $username) {
+		$statusMessage = makeStatusMessage(3,"error");
+		mysqli_close($conn);
+		return;
+	}
 
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
-	
-	$username = $conn->real_escape_string($_POST["user"]);
 	
 	$selQ = new selectSQL($conn);
 	$selQ->select = array ("email", "fname", "lname", "firm", "address", "city", "country", "phone");
@@ -27,13 +32,13 @@
 	}
 	
 	if ($selQ->getNumberOfResults() == 0)
-		$statusMessage = makeStatusMessage(14,"error","Error getting data from database...");
+		$statusMessage = makeStatusMessage(5,"error");
 	else if ($selQ->getNumberOfResults() > 1)
-		$statusMessage = makeStatusMessage(13,"error","Multiple results for this user...");
+		$statusMessage = makeStatusMessage(16,"error");
 	else {
 		while ($row = $selQ->result->fetch_assoc())
 			$data[] = $row;
-		$statusMessage = makeStatusMessage(15,"success","Data gathered succesfully.");
+		$statusMessage = makeStatusMessage(20,"success");
 	}
 	mysqli_close($conn);
 	return;

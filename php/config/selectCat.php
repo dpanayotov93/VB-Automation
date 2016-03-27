@@ -1,16 +1,18 @@
 <?php
 	if (!isset($_POST["id"])) {
-		$statusMessage = makeStatusMessage(2,"error","Incomplete query request...");
+		$statusMessage = makeStatusMessage(4,"error");
 		return;
 	}
 	
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
 	
 	$id = $conn->real_escape_string($_POST['id']);
+	
+	$user = getUser($conn);
 	
 	$selQ = new selectSQL($conn);
 	$selQ->select = array("id");
@@ -24,7 +26,7 @@
 	}
 	
 	if ($selQ->getNumberOfResults() == 0) {
-		$statusMessage = makeStatusMessage(24,"error","Category not found!");
+		$statusMessage = makeStatusMessage(51,"error");
 		mysqli_close($conn);
 		return;
 	}
@@ -110,11 +112,14 @@
 	
 	$selQ->distinct = false;
 	$selQ->select = array("imgurl as ".$imgurl[$language]);
+    $selQ->select[] = "p.id as id";
 	$selQ->select[] = "names".$language." as ".$nameLang[$language]; //fix with db for default props
 	$selQ->select[] = "price as ".$price[$language];//fix with db for default props
-	$cleanProps = array();
-	for ($i=0;$i<count($propNames);$i++) 
+	for ($i=0;$i<count($propNames);$i++) {
+		// if ($propNames['price']) ADD PRICE SHOWING AND DISCOUNTS 
+	
 		$selQ->select = array_merge($selQ->select,array($propNames[$i]." as `".$propLangName[$i]."`"));
+	}
 	$selQ->tableNames = array ("products as p");
 	$selQ->joins = array();
 	$selQ->joinTypes = array();
@@ -128,6 +133,15 @@
 		$selQ->joins[] = "p.id = ld.infoid";
 		$selQ->joinTypes[] = "INNER JOIN";
 	}
+	if (isset($user['id'])) {
+		if ($language == "BG")
+			$selQ->select[] = "productid as Любим";
+		else 
+			$selQ->select[] = "productid as Favorite";
+		$selQ->tableNames[] = "favorites as f";
+		$selQ->joins[] = "p.id = f.id AND userid = '".$user['id']."'";
+		$selQ->joinTypes[] = "LEFT JOIN";
+	}
 	if (isset($_POST['countPerPage']) && is_int($_POST['countPerPage']))
 		if (isset($_POST['page']) && is_int($_POST['page']))
 			$selQ->limit = ($_POST['countPerPage'] - 1)*$_POST['page'].",".$_POST['countPerPage']; 
@@ -140,12 +154,15 @@
 		return;
 	}
 	if ($selQ->getNumberOfResults() == 0)
-		$statusMessage = makeStatusMessage(25, "error", "Nothing to select.");
+		$statusMessage = makeStatusMessage(59, "error");
 	else {
 		$dataP = array();
-		while ($row = $selQ->result->fetch_assoc())
-			$dataP[] = $row;
-		$statusMessage = makeStatusMessage(15,"success","Data sent succesfully.");
+		while ($row = $selQ->result->fetch_assoc()) {
+			$idtmp = $row['id'];
+			unset($row['id']);
+			$dataP[$idtmp] = $row;
+		}
+		$statusMessage = makeStatusMessage(22,"success");
 		$data = array("filters" => $dataF, "products" => $dataP);	
 	}
 	mysqli_close($conn);

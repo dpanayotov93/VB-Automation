@@ -1,21 +1,23 @@
 <?php
 	if (!isset($_POST["id"])) {
-		$statusMessage = makeStatusMessage(2,"error","Incomplete query request...");
+		$statusMessage = makeStatusMessage(4,"error");
 		return;
 	}
 	
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
 	$id = $conn->real_escape_string($_POST['id']);
+	$user = getUser($conn);
 	
-	if(!checkUserCredentials($id,"private")) {
-		$statusMessage = makeStatusMessage(12,"error", "Permision denied.");
+	if ($id != $user['id']) {
+		$statusMessage = makeStatusMessage(3,"error");
 		mysqli_close($conn);
 		return;
 	}
+
 	$selQ = new selectSQL($conn);
 	$selQ->select = array("u.id as uid", "i.userid as iid");
 	$selQ->tableNames = array("user_info as i", "users as u");
@@ -51,7 +53,7 @@
 		$insQ->tableName = "user_info";
 		
 		if ($insQ->executeQuery())
-			$statusMessage = makeStatusMessage(10,"success","Data saved successfully!");
+			$statusMessage = makeStatusMessage(10,"success");
 		else 
 			$statusMessage = $insQ->status;
 	} else  {
@@ -62,7 +64,7 @@
 			if (isset($_POST[$c])) 
 				$updQ->update .= $c."='". $conn->real_escape_string($_POST[$c])."',";
 		if (empty($updQ->update)) {
-			$statusMessage = makeStatusMessage(12,"error","Nothing to update");
+			$statusMessage = makeStatusMessage(59,"error");
 			mysqli_close($conn);
 			return;
 		}
@@ -71,7 +73,7 @@
 		$updQ->tableName = "user_info";
 		$updQ->where = "id='".$id."'";
 		if ($updQ->executeQuery())
-			$statusMessage = makeStatusMessage(12,"success","Data updated successfully!");
+			$statusMessage = makeStatusMessage(30,"success");
 		else 
 			$statusMessage = $updQ->status;
 	}

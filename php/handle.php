@@ -1,5 +1,6 @@
 <?php
 	require_once ("config/config.php");
+	sec_session_start();
 	
 	$q = "";
 	$data = array();

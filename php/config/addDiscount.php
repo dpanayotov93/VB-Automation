@@ -1,8 +1,16 @@
 <?php
 
 	$conn = sqlConnectDefault();
-	if(is_null($conn)) 
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+	if(is_null($conn)) { 
+		$statusMessage = makeStatusMessage(1,"error");
+		return;
+	}
+	$user = getUser($conn);
+	if ($user['access'] != 3) {
+		$statusMessage = makeStatusMessage(3,"error");
+		mysqli_close($conn);
+		return;
+	}
 	else if (isset($_POST['delete']) && isset($_POST['discountid'])) {
 		$delQ = new deleteSQL($conn);
 		$delQ->tableName = "discounts";
@@ -10,7 +18,7 @@
 		if (!$delQ->executeQuery())
 			$statusMessage = $delQ->status;
 		else 
-			$statusMessage = makeStatusMessage(234, "success", "Discount deteled.");
+			$statusMessage = makeStatusMessage(46, "success");
 	}else if (!(isset($_POST["catid"]) || isset($_POST["prodid"])) || !(isset($_POST['flat']) || isset($_POST['percent']))) {
 		$discounts = array();
 		$selQ = new selectSQL($conn);
@@ -29,7 +37,7 @@
 		}
 		
 		if ($selQ->getNumberOfResults() < 1) {
-			$statusMessage = makeStatusMessage(123, "error", "No discounts to show.");
+			$statusMessage = makeStatusMessage(56, "error");
 			mysqli_close($conn);
 			return;
 		}
@@ -45,7 +53,7 @@
 		}
 		
 		$data = $discounts;
-		$statusMessage = makeStatusMessage(234, "succes", "Information gathered");
+		$statusMessage = makeStatusMessage(26, "succes");
 	} else if (isset($_POST['discountid'])) {
 		$delQ = new deleteSQL($conn);
 		$delQ->tableName = "discounts";
@@ -53,7 +61,7 @@
 		$updQ->update = "userid='".$conn->real_escape_string($_POST['userid'])."',categoryid='".$conn->real_escape_string($_POST['catid'])."',productid='".$conn->real_escape_string($_POST['prodid'])."',flat='".$conn->real_escape_string($_POST['flat'])."',percent='".$conn->real_escape_string($_POST['percent'])."',minprice='".$conn->real_escape_string($_POST['minprice'])."'";
 		$updQ->where = "id = ".$conn->real_escape_string($_POST['discountid']);
 		if ($updQ->executeQuery())
-			$statusMessage = makeStatusMessage(2234, "success", "Data successfully added.");
+			$statusMessage = makeStatusMessage(46, "success");
 		else
 			$statusMessage = $updQ->status;
 	} else if (isset($_POST['userid'])) {
@@ -78,27 +86,53 @@
 			$insQ->insertData[] = $conn->real_escape_string($_POST['minprice']);
 			$insQ->cols[] = "minprice";
 		}
+		$selQ = new selectSQL($conn);
+		$selQ->select = array("id");
+		$selQ->tableNames = array("dicounts");
 		if (isset ($_POST['prodid']) && count($_POST['prodid'])) {
 			$insCount = count($insQ->insertData);
 			foreach ($_POST['prodid'] as $pid) {
-				$insQ->insertData[$insCount] = $conn->real_escape_string($pid);
-				$insQ->cols[$insCount] = "productid";
+				$pid = $conn->real_escape_string($pid);
+				$selQ->where = "productid = '".$pid."' AND userid = '".$conn->real_escape_string($_POST['userid'])."'";
+				if (!$selQ->executeQuery()) {
+					$statusMessage = $selQ->status;
+					$error = 1;
+				} else if ($selQ->getNumberOfResults()) {
+					$statusMessage = makeStatusMessage(105, "error");
+					$error = 1;
+				} else {
+					$insQ->insertData[$insCount] = $pid;
+					$insQ->cols[$insCount] = "productid";
+					if (!$insQ->executeQuery()) {
+						$statusMessage = $insQ->status;
+						$error = 1;
+					}
+				}
+			}
+		} else if (!empty($_POST['catid'])) {
+			$selQ->where = "categoryid = '".$conn->real_escape_string($_POST['catid'])."' AND userid = '".$conn->real_escape_string($_POST['userid'])."'";
+			if (!$selQ->executeQuery()) {
+				$statusMessage = $selQ->status;
+				$error = 1;
+			} else if ($selQ->getNumberOfResults()) {
+				$statusMessage = makeStatusMessage(104, "error");
+				$error = 1;
+			} else {
+				$insQ->insertData[] = $conn->real_escape_string($_POST['catid']);
+				$insQ->cols[] = "categoryid";
 				if (!$insQ->executeQuery()) {
 					$statusMessage = $insQ->status;
 					$error = 1;
 				}
 			}
-		} else {
-			if (!$insQ->executeQuery()) {
-				$statusMessage = $insQ->status;
-				$error = 1;
-			}
-		}
+		} else 
+			$statusMessage = makeStatusMessage(4, "error");
+		
 		if (!isset($error))
-			$statusMessage = makeStatusMessage(2234, "success", "Data successfully added.");
+			$statusMessage = makeStatusMessage(16, "success");
 
 	} else 
-		$statusMessage = makeStatusMessage(14, "error", "Incomplete query request.");
+		$statusMessage = makeStatusMessage(4, "error");
 	
 	mysqli_close($conn);
 	return;

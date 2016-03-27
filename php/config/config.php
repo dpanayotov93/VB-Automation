@@ -1,17 +1,17 @@
 <?php
 
+require_once ("loginConfig.php");
+require_once ("statusMessages.php");
+
+include "sqlClasses.inc";
+
 $debugSQL = false;
 if (isset($_GET["debug"]) OR isset($_POST["debug"]))
 	$debugSQL = True;
 
-
-	iconv_set_encoding("internal_encoding", "UTF-8");
-	iconv_set_encoding("output_encoding", "UTF-8");
-	iconv_set_encoding("input_encoding", "UTF-8");
-	
-	
-include "sqlClasses.inc";
-
+iconv_set_encoding("internal_encoding", "UTF-8");
+iconv_set_encoding("output_encoding", "UTF-8");
+iconv_set_encoding("input_encoding", "UTF-8");
 
 function sqlConnectDefault() {
 	$servername = "localhost";
@@ -57,11 +57,6 @@ function debugMessages($msg, $type) {
 		echo "DEBUG INFO[".$type."]:<br>".$msg."<br></br>";
 }
 
-function makeStatusMessage($id, $type, $message) {
-	$sm = array ("type" => $type, "message" => $message);
-	return $sm;
-}
-
 function utf8_string_array_encode(&$array){
 	$func = function(&$value,&$key){
 		if(is_string($value))
@@ -97,9 +92,14 @@ function getLanguages($conn) {
 		return null;
 	else 
 		return $selQ->result;
-}
-
-function checkUserCredentials($id,$type) { // TO DO!!!!!
-	return 1;
+	
+	/*
+	else {
+		$lang = array();
+		while ($r=$selQ->result->fetch_assoc())
+			$lang[] = $r['abreviation'];
+		return $lang;
+	}
+	*/
 }
 ?>

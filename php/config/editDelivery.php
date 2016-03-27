@@ -2,7 +2,13 @@
 
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(6,"error","Could not connect to database!");
+		$statusMessage = makeStatusMessage(1,"error");
+		return;
+	}
+	$user = getUser($conn);
+	if ($user['access'] != 3) {
+		$statusMessage = makeStatusMessage(3,"error");
+		mysqli_close($conn);
 		return;
 	}
 
@@ -47,7 +53,7 @@
 			return;
 		}
 		
-		$statusMessage = makeStatusMessage(1234, "success", "Delivery info saved!");
+		$statusMessage = makeStatusMessage(14, "success");
 		
 	}
 
