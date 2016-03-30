@@ -18,7 +18,7 @@
 	}
 	
 
-	require_once 'orderVariables.php';
+	require_once 'orderConfig.php';
 	
 	$nameLang = array("EN" => "Product","BG" => "Продукт");
 	$priceLang = array("EN" => "Price","BG" => "Цена");
@@ -62,17 +62,29 @@
 			$r['price'] -= $r['flat'];  
 		$productInfo[] = array($nameLang[$language] => $r['name'],$priceLang[$language] => $r['price']);
 	}
-	$payment = ""; //wtf deg
-	$address = "";
-// 	$payment = $conn->real_escape_string($_POST['payment']);
-// 	$address = $conn->real_escape_string($_POST['address']);
+	$payment = $conn->real_escape_string($_POST['payment']);
+	$delivery = $conn->real_escape_string($_POST['delivery']);
+	
+	$selDelivery = new selectSQL($conn);
+	$selDelivery->select = array("type","minprice");
+	$selDelivery->tableNames = array("delivery_discounts");
+	$selDelivery->where = "userid = ".$userid;
+	if (!$selDelivery->executeQuery()) {
+		$statusMessage = $selDelivery->status;
+		mysqli_close($conn);
+		return;
+	}
+	$r = $selDelivery->result->fetch_assoc();
+	$deliveryPayment = $r['type'];
+	
+	$address = $conn->real_escape_string($_POST['address']);
 	$totalPrice = 0;
 	foreach ($productInfo as $pi) 
 		$totalPrice += $pi[$priceLang[$language]];
 	
 	$insQ = new insertSQL($conn);
-	$insQ->cols = array("userid","payment","date","ip","address","totalprice");
-	$insQ->insertData = array($userid,$payment,time(),ip2long($_SERVER['REMOTE_ADDR']),$address,$totalPrice);
+	$insQ->cols = array("userid","payment","delivery","deliverypayment","date","ip","address","totalprice");
+	$insQ->insertData = array($userid,$payment,$delivery,$deliveryPayment,time(),ip2long($_SERVER['REMOTE_ADDR']),$address,$totalPrice);
 	$insQ->tableName = "orders";
 		
 	if (!$insQ->executeQuery()) {
@@ -93,11 +105,11 @@
 	$row = $selQlast->result->fetch_assoc();
 	$lastID = $row['lastid'];
 	
-	foreach ($productInfo as $prod) {
+	foreach ($prodids as $prod) {
 		unset($insQ);
 		$insQ = new insertSQL($conn);
 		$insQ->cols = array("orderid","productid","productcount");
-		$insQ->insertData = array($lastID,$prod);
+		$insQ->insertData = array($lastID,$prod,$prodQuantity[$prod]);
 		$insQ->tableName = "ordered_products";
 		
 		if (!$insQ->executeQuery()) {

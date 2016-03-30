@@ -10,7 +10,7 @@
 		return;
 	}
 	
-	$user = $conn->real_escape_string($_POST["email"]);
+	$user = $conn->real_escape_string($_POST["user"]);
 	$userdata = getUser($conn);
 	
 	if (!isset($userdata))

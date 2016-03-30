@@ -6,13 +6,13 @@
 		return;
 	}
 
-	if (!$_POST['show']) {
+	if (!isset($_POST['show'])) {
 		$statusMessage = makeStatusMessage(4, "error");
 		return;
 	}
 	
 	$user = getUser($conn);
-	if ($user['access'] != 3) {
+	if (empty($user) OR ($user['access'] != 3 AND $_POST['userid'] != $user['id'])) {
 		$statusMessage = makeStatusMessage(3,"error");
 		mysqli_close($conn);
 		return;
@@ -24,11 +24,11 @@
 	$selQ->joins = array("u.id = i.userid");
 	$selQ->joinTypes = array("LEFT JOIN");
 	if (!empty($_POST['userid']))
-		$selQ->where = "id = ".$conn->real_escape_string($_POST['userid']);
+		$selQ->where = "u.id = ".$conn->real_escape_string($_POST['userid']);
 	
 	if (isset($_POST['delivery'])) {
 		$selQ->select[] = "type as Type";
-		$selQ->select[] = "minpirce as `Minimum price`";
+		$selQ->select[] = "minprice as `Minimum price`";
 		$selQ->tableNames[] = "delivery_discounts as dd";
 		$selQ->joins[] = "u.id = dd.userid";
 		$selQ->joinTypes[] = "LEFT JOIN";
@@ -53,7 +53,7 @@
 	$data = array();
 	while ($row = $selQ->result->fetch_assoc()) {
 		if (isset($_POST['delivery']))
-			if($row['Type'] == 0) 
+			if(!isset($row['Type']) OR $row['Type'] == 0) 
 				$row['Type'] = "Covered by client.";
 			elseif ($row['Type'] == 1)
 				$row['Type'] = "Covered by provider.";

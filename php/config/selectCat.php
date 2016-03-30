@@ -10,14 +10,14 @@
 		return;
 	}
 	
-	$id = $conn->real_escape_string($_POST['id']);
+	$catid = $conn->real_escape_string($_POST['id']);
 	
 	$user = getUser($conn);
 	
 	$selQ = new selectSQL($conn);
 	$selQ->select = array("id");
 	$selQ->tableNames = array ("categories");
-	$selQ->where = "id = '".$id."' AND visible = 1";
+	$selQ->where = "id = '".$catid."' AND visible = 1";
 	
 	if (!$selQ->executeQuery()) {
 		$statusMessage = $selQ->status;
@@ -34,10 +34,9 @@
 	$selQ = new selectSQL($conn);
 	$selQ->select = array("props.name as n","props.name".$language." as lang","props.langDependant as ld");;
 	$selQ->tableNames = array ("props_to_prods as ids", "properties as props");
-	$selQ->where = "ids.catid = '".$id."' AND props.searchable = '1'";
+	$selQ->where = "ids.catid = '".$catid."' AND props.searchable = '1'";
 	$selQ->joinTypes = array ("JOIN");
 	$selQ->joins = array ("ids.propid = props.id");
-	
 	
 	if (!$selQ->executeQuery()) {
 		$statusMessage = $selQ->status;
@@ -74,13 +73,13 @@
 	$selQ->tableNames = array ("products as p");
 	$selQ->joins = array();
 	$selQ->joinTypes = array();
-	if (checkTable($conn, "products_".$id)) {
-		$selQ->tableNames[] = "products_".$id." as nld";
+	if (checkTable($conn, "products_".$catid)) {
+		$selQ->tableNames[] = "products_".$catid." as nld";
 		$selQ->joins[] = "p.id = nld.infoid";
 		$selQ->joinTypes[] = "INNER JOIN";
 	}
-	if (checkTable($conn, "products_".$id."_".$language)) {
-		$selQ->tableNames[] = "products_".$id."_".$language." as ld";
+	if (checkTable($conn, "products_".$catid."_".$language)) {
+		$selQ->tableNames[] = "products_".$catid."_".$language." as ld";
 		$selQ->joins[] = "p.id = ld.infoid";
 		$selQ->joinTypes[] = "INNER JOIN";
 	}
@@ -106,15 +105,19 @@
 			$dataF[] = array("name" => $propNames[$i], $propNames[$i] => array($conn->real_escape_string($_POST['filters'][$propNames[$i]])));
 	}
 	
-	$price = array("EN" => "Price","BG" => "Цена");
-	$imgurl = array("EN" => "Image","BG" => "Снимка");
-	$nameLang = array("EN" => "Name","BG" => "Име");
+	include_once 'variables/productVariables.php';
 	
 	$selQ->distinct = false;
-	$selQ->select = array("imgurl as ".$imgurl[$language]);
+	$selQ->select = array("imgurl as ".$propNamesLang["imgurl"][$language]);
     $selQ->select[] = "p.id as id";
-	$selQ->select[] = "names".$language." as ".$nameLang[$language]; //fix with db for default props
-	$selQ->select[] = "price as ".$price[$language];//fix with db for default props
+    foreach ($propNamesLang as $key => $p)
+    	if ($key != "imgurl" AND !empty($p)) {
+	    	$selQ->select = array_merge($selQ->select,array($key." as ".$p[$language]));
+	    	echo $key ."<br>";
+	    	print_r($p);
+	    	echo "<br>";
+    	}
+	$selQ->select[] = "price as ".$priceProductLang[$language];
 	for ($i=0;$i<count($propNames);$i++) {
 		// if ($propNames['price']) ADD PRICE SHOWING AND DISCOUNTS 
 	
@@ -123,31 +126,30 @@
 	$selQ->tableNames = array ("products as p");
 	$selQ->joins = array();
 	$selQ->joinTypes = array();
-	if (checkTable($conn, "products_".$id)) {
-		$selQ->tableNames[] = "products_".$id." as nld";
+	if (checkTable($conn, "products_".$catid)) {
+		$selQ->tableNames[] = "products_".$catid." as nld";
 		$selQ->joins[] = "p.id = nld.infoid";
 		$selQ->joinTypes[] = "INNER JOIN";
 	}
-	if (checkTable($conn, "products_".$id."_".$language)) {
-		$selQ->tableNames[] = "products_".$id."_".$language." as ld";
+	if (checkTable($conn, "products_".$catid."_".$language)) {
+		$selQ->tableNames[] = "products_".$catid."_".$language." as ld";
 		$selQ->joins[] = "p.id = ld.infoid";
 		$selQ->joinTypes[] = "INNER JOIN";
-	}
+	}	
+	
+
 	if (isset($user['id'])) {
-		if ($language == "BG")
-			$selQ->select[] = "productid as Любим";
-		else 
-			$selQ->select[] = "productid as Favorite";
+		$selQ->select[] = "productid as ".$favoriteProductLang[$language];
 		$selQ->tableNames[] = "favorites as f";
 		$selQ->joins[] = "p.id = f.id AND userid = '".$user['id']."'";
 		$selQ->joinTypes[] = "LEFT JOIN";
 	}
 	if (isset($_POST['countPerPage']) && is_int($_POST['countPerPage']))
 		if (isset($_POST['page']) && is_int($_POST['page']))
-			$selQ->limit = ($_POST['countPerPage'] - 1)*$_POST['page'].",".$_POST['countPerPage']; 
-		else 
-			$selQ->limit = $conn->real_escape_string($_POST['countPerPage']); 
-		
+			$selQ->limit = ($_POST['countPerPage'] - 1)*$_POST['page'].",".$_POST['countPerPage'];
+			else
+				$selQ->limit = $conn->real_escape_string($_POST['countPerPage']);
+	
 	if (!$selQ->executeQuery()){
 		$statusMessage = $selQ->status;
 		mysqli_close($conn);

@@ -137,7 +137,7 @@
 			}
 			$tmp = array("Appears in filters" => "searchable","Differs in languages" => "langDependant");
 			$data = array("input" => $data,"checkbox" => $tmp);
-			// $statusMessage = makeStatusMessage(29, "success");
+			$statusMessage = makeStatusMessage(29, "success");
 		}
 		$GLOBALS['data'] = $data;
 		$GLOBALS['statusMessage'] = $statusMessage;

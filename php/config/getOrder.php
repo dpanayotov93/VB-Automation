@@ -18,7 +18,7 @@
 		return;
 	}
 	
-	require_once 'orderVariables.php';
+	require_once 'orderConfig.php';
 	
 	$selQ = new selectSQL($conn);
 	$selQ->tableNames = array("orders as o");

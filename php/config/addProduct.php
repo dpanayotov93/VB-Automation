@@ -366,9 +366,7 @@
 
 	function getPropsForCat($conn,$catid,$langArr = null,$insertQueryLangArr = null) {
 		
-		$propNamesDef = array("catid","price","qty","imgurl","promo");
-		$propNamesDefldtemp = array("names","desc");
-		
+		include_once 'variables/productVariables.php';
 		
 		if (isset($langArr)) {
 			$propNamesDefld = array();

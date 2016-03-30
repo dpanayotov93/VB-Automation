@@ -56,18 +56,15 @@
 			$propNames[] = $row['n'];
 		$propLangName[] = $row['lang'];
 	}
-	
-	$price = array("EN" => "Price","BG" => "Цена");
-	$imgurl = array("EN" => "Image","BG" => "Снимка");
-	$nameLang = array("EN" => "Name","BG" => "Име");
+
+	include_once 'variables/productVariables.php';
 	
 	unset($selQ);
 	$selQ = new selectSQL($conn);
-	$selQ->select = array("imgurl as ".$imgurl[$language]);
-	$selQ->select[] = "names".$language." as ".$nameLang[$language]; //fix with db for default props
-	// if (isset($user['id']))
-		// show price
-	$selQ->select[] = "price as ".$price[$language];//fix with db for default props
+	$selQ->select = array("imgurl as ".$propNamesLang["imgurl"][$language]);
+	foreach ($propNamesLang as $key => $p)
+    	if ($key != "imgurl" AND !empty($p))
+	    	$selQ->select = array_merge($selQ->select,array($key." as ".$p[$language]));
 	$selQ->where = "p.id = '".$id."'";
 	$cleanProps = array();
 	for ($i=0;$i<count($propNames);$i++)

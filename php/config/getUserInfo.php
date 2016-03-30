@@ -4,17 +4,17 @@
 		return;
 	}
 
+	$conn = sqlConnectDefault();
+	if(is_null($conn)) {
+		$statusMessage = makeStatusMessage(1,"error");
+		return;
+	}
+	
 	$username = $conn->real_escape_string($_POST["user"]);
 	$user = getUser($conn);
 	if ($user['access'] != 3 && $user['name'] != $username) {
 		$statusMessage = makeStatusMessage(3,"error");
 		mysqli_close($conn);
-		return;
-	}
-
-	$conn = sqlConnectDefault();
-	if(is_null($conn)) {
-		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
 	

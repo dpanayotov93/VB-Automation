@@ -3,7 +3,7 @@
 function sec_session_start() {
 	$session_name = 'automation-point_login';
 	$secure = false;
-	$httponly = true;
+	$httponly = false;
 	if (ini_set('session.use_only_cookies', 1) === FALSE)
 		return null;
 	

@@ -1,7 +1,7 @@
 <?php
 
 require_once ("loginConfig.php");
-require_once ("statusMessages.php");
+require_once ("statusConfig.php");
 
 include "sqlClasses.inc";
 
@@ -80,6 +80,13 @@ function arrToQueryString($arr, $inQuotes) {
 			$res .= $s.",";
 	$res = substr($res, 0, -1);
 	return $res;
+}
+
+function nullToEmptyString($array) {
+	foreach ($array as $key => $value)
+		if (is_null($value))
+			$array[$key] = "";
+	return $array;
 }
 
 function getLanguages($conn) {

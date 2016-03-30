@@ -20,7 +20,7 @@
 		$statusMessage = makeStatusMessage(0, "error", "Empty query request...");
 	
 	if (!empty($data))
-		$main = array($q => $data, "status" => $statusMessage);
+		$main = array($q => nullToEmptyString($data), "status" => $statusMessage);
 	else 
 		$main = array("status" => $statusMessage);
 	
