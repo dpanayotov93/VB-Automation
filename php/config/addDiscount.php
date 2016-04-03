@@ -11,7 +11,10 @@
 		mysqli_close($conn);
 		return;
 	}
-	else if (isset($_POST['delete']) && isset($_POST['discountid'])) {
+
+	$log = createLog(1); // ADD ADMIN LOG
+	
+	if (isset($_POST['delete']) && isset($_POST['discountid'])) {
 		$delQ = new deleteSQL($conn);
 		$delQ->tableName = "discounts";
 		$delQ->where = "id = ".$conn->real_escape_string($_POST['discountid']);

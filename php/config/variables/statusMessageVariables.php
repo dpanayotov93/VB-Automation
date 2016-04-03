@@ -77,7 +77,7 @@ $succesMsg = array();
 // ------------EN----------- //
 //LOGIN
 $succesMsg["EN"][1] = "Successful login!";
-$succesMsg["EN"][1] = "Successful logout!";
+$succesMsg["EN"][2] = "Successful logout!";
 //ADDING DATA
 $succesMsg["EN"][10] = "User information successfully added.";
 $succesMsg["EN"][11] = "Category successfully added.";

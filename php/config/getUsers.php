@@ -17,6 +17,10 @@
 		mysqli_close($conn);
 		return;
 	}
+	if ($user['access'] != 3)
+		$log = createLog("","profile");
+	else 
+		$log = createLog(1); // ADD ADMIN LOG
 	
 	$selQ = new selectSQL($conn);
  	$selQ->select = array ("u.id as id","u.user as User","i.email as `e-mail`","i.fname as `First Name`","i.lname As `Last Name`","i.phone as Phone","i.firm as Firm","i.country as Country","i.city as City","i.address as Address");

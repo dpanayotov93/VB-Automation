@@ -55,7 +55,7 @@ abstract class basicSQL {
 
 class selectSQL extends  basicSQL {
 	
-	var $select, $distinct, $tableNames, $joinTypes, $joins, $where, $having, $order, $limit;
+	var $select, $distinct, $tableNames, $joinTypes, $joins, $where, $having, $groupby, $order, $limit;
 	
 	function checkParameters() {
 		if (empty($this->select) OR empty($this->tableNames))
@@ -79,6 +79,8 @@ class selectSQL extends  basicSQL {
 			$qText .= " WHERE " . $this->where;
 		if (!empty($this->having))
 			$qText .= " HAVING " . $this->having;
+		if (!empty($this->order))
+			$qText .= " GROUP BY " . $this->groupby;
 		if (!empty($this->order))
 			$qText .= " ORDER BY " . $this->order;
 		if (!empty($this->limit))

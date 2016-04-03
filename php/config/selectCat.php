@@ -13,6 +13,11 @@
 	$catid = $conn->real_escape_string($_POST['id']);
 	
 	$user = getUser($conn);
+
+	if (empty($user))
+		$log = createLog("","",$catid);
+	else
+		$log = createLog("","",$catid,"",$user['id']);
 	
 	$selQ = new selectSQL($conn);
 	$selQ->select = array("id");
@@ -111,12 +116,8 @@
 	$selQ->select = array("imgurl as ".$propNamesLang["imgurl"][$language]);
     $selQ->select[] = "p.id as id";
     foreach ($propNamesLang as $key => $p)
-    	if ($key != "imgurl" AND !empty($p)) {
+    	if ($key != "imgurl" AND !empty($p)) 
 	    	$selQ->select = array_merge($selQ->select,array($key." as ".$p[$language]));
-	    	echo $key ."<br>";
-	    	print_r($p);
-	    	echo "<br>";
-    	}
 	$selQ->select[] = "price as ".$priceProductLang[$language];
 	for ($i=0;$i<count($propNames);$i++) {
 		// if ($propNames['price']) ADD PRICE SHOWING AND DISCOUNTS 

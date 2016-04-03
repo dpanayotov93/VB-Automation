@@ -18,6 +18,8 @@
 		return;
 	}
 	
+	$log = createLog("","favorites","","",$userid);
+	
 	if (isset($_POST['add']) && (!empty($_POST['productid']) || !empty($_POST['categoryid']))) {
 		$fieldArr = array("userid","productid","categoryid");
 		$insQ = new insertSQL($conn);

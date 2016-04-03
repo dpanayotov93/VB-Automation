@@ -17,7 +17,8 @@
 		return;
 	}
 	
-
+	$log = createLog("","order","","",$userid);
+	
 	require_once 'orderConfig.php';
 	
 	$nameLang = array("EN" => "Product","BG" => "Продукт");

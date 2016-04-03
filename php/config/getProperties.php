@@ -8,18 +8,13 @@
 		return;
 	}
 	
-	$result = getLanguages($conn);
-	if (is_null($result)) {
-		$statusMessage = makeStatusMessage(2, "error");
-		mysqli_close($conn);
-		return;	
-	}
+	require_once 'languageConfig.php';
 	
 	$selQ = new selectSQL($conn);
 	$selQ->select = array("id");
-	while($row = $result->fetch_assoc()) {
-		$selQ->select[] = "name".$row['abreviation'];
-		$selQ->select[] = "desc".$row['abreviation'];
+	foreach ($langArr as $l) {
+		$selQ->select[] = "name".$l;
+		$selQ->select[] = "desc".$l;
 	}
 	$selQ->select[] = "searchable";
 	$selQ->tableName = array("properties");

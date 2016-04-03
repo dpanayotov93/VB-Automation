@@ -12,7 +12,7 @@ function sec_session_start() {
 
 	session_name($session_name);
 	session_start();
-	session_regenerate_id(true);
+// 	session_regenerate_id(true);
 	return true;
 }
 

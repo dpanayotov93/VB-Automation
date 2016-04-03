@@ -6,19 +6,14 @@
 		return;
 	}
 	
-	$langResult = getLanguages($conn);
-	if (is_null($langResult)) {
-		$statusMessage = makeStatusMessage(2, "error");
-		mysqli_close($conn);
-		return;
-	}
-	
 	$user = getUser($conn);
 	if ($user['access'] != 3) {
 		$statusMessage = makeStatusMessage(3,"error");
 		mysqli_close($conn);
 		return;
 	}
+	
+	$log = createLog(1); // ADD ADMIN LOG
 	
 	if (isset($_POST['id'])) {
 		if (isset($_POST['delete']))
@@ -54,16 +49,19 @@
 	}
 	
 	function updCat($conn) {
+		
+		require_once 'languageConfig.php';
+		
 		$id = $conn->real_escape_string($_POST['id']);
 		$updQ = new updateSQL($conn);
 		$updQ->update = "";
 		$updQ->tableName = "categories";
 		$updQ->where = "id = '".$id."'";
-		while ($row = $GLOBALS['langResult']->fetch_assoc()) {
-			if (isset($_POST['names'][$row['abreviation']])) 
-				$updQ->update .= "name".$row['abreviation']." = '".$conn->real_escape_string($_POST['names'][$row['abreviation']])."',";
-			if (isset($_POST['desc'][$row['abreviation']])) 
-				$updQ->update .= "desc".$row['abreviation']." = '".$conn->real_escape_string($_POST['desc'][$row['abreviation']])."',";
+		foreach ($langArr as $l) {
+			if (isset($_POST['names'][$l])) 
+				$updQ->update .= "name".$l." = '".$conn->real_escape_string($_POST['names'][$l])."',";
+			if (isset($_POST['desc'][$l])) 
+				$updQ->update .= "desc".$l." = '".$conn->real_escape_string($_POST['desc'][$l])."',";
 		}
 		if (isset($_POST['parentid']))
 			$updQ->update .= "parentid = '".$conn->real_escape_string($_POST['parentid'])."',";
@@ -80,10 +78,11 @@
 	}
 	
 	function getCatFields($conn) {
+		require_once 'languageConfig.php';
 		$data = array("Parent id" => "parentid");
-		while($row = $GLOBALS['langResult']->fetch_assoc()) {
-			$data = array_merge($data,array("Name ".$row["abreviation"] => "names[".$row["abreviation"]."]"));
-			$data = array_merge($data,array("Discription ".$row["abreviation"] => "desc[".$row["abreviation"]."]"));
+		foreach ($langArr as $l) {
+			$data = array_merge($data,array("Name ".$l => "names[".$l."]"));
+			$data = array_merge($data,array("Discription ".$l => "desc[".$l."]"));
 		}
 		$data = array_merge($data,array("Link to image" => "imgurl"));
 		$statusMessage = makeStatusMessage(21, "success");
@@ -99,19 +98,19 @@
 	}
 	
 	function insCat($conn) {
+		require_once 'languageConfig.php';
+		
 		$insQ = new insertSQL($conn);
 		$insQ->insertData = array();
 		$insQ->cols = array();
-		$langAbr = array();
-		while ($row = $GLOBALS['langResult']->fetch_assoc()) {
-			$langAbr[] = $row['abreviation'];
-			if (isset($_POST['names'][$row['abreviation']])) {
-				$insQ->insertData[] = $conn->real_escape_string($_POST['names'][$row['abreviation']]);
-				$insQ->cols[] = "name".$row['abreviation'];
+		foreach ($langArr as $l) {
+			if (isset($_POST['names'][$l])) {
+				$insQ->insertData[] = $conn->real_escape_string($_POST['names'][$l]);
+				$insQ->cols[] = "name".$l;
 			}
-			if (isset($_POST['desc'][$row['abreviation']])) {
-				$insQ->insertData[] = $conn->real_escape_string($_POST['desc'][$row['abreviation']]);
-				$insQ->cols[] = "desc".$row['abreviation'];
+			if (isset($_POST['desc'][$l])) {
+				$insQ->insertData[] = $conn->real_escape_string($_POST['desc'][$l]);
+				$insQ->cols[] = "desc".$l;
 			}
 		}
 		if (isset($_POST['imgUrl'])) {
@@ -130,7 +129,7 @@
 		else {
 			$selQid = new selectSQL($conn);
 			$selQid->where = "";
-			foreach ($langAbr as $l)
+			foreach ($langArr as $l)
 				if (isset($_POST['names'][$l]))
 					$selQid->where = "name".$l." = '".$conn->real_escape_string($_POST['names'][$l])."' OR ";
 				
@@ -186,7 +185,7 @@
 					}
 					
 					if (count($propsLang)) {
-						foreach ($langAbr as $l) {
+						foreach ($langArr as $l) {
 							unset($ctQ->cols);
 							$ctQ->cols[] = "infoid";
 							unset($ctQ->colTypes);

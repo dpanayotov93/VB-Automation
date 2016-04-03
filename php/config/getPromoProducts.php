@@ -1,28 +1,22 @@
 <?php
-	if (!isset($_POST["id"])) {
-		$statusMessage = makeStatusMessage(4,"error");
-		return;
-	}
-	
+
 	$conn = sqlConnectDefault();
 	if(is_null($conn)) {
 		$statusMessage = makeStatusMessage(1,"error");
 		return;
 	}
 	
-	$id = $conn->real_escape_string($_POST['id']);
-	
 	$user = getUser($conn);
-	
+
 	if (empty($user))
-		$log = createLog("","","",$id); 
-	else 
+		$log = createLog("","","",$id);
+	else
 		$log = createLog("","","",$id,"");
 	
 	$selQ = new selectSQL($conn);
 	$selQ->select = array("catid");
 	$selQ->tableNames = array ("products");
-	$selQ->where = "id = '".$id."'";
+	$selQ->where = "promo != '0'";
 	
 	if (!$selQ->executeQuery()) {
 		$statusMessage = $selQ->status;
@@ -70,7 +64,7 @@
 	foreach ($propNamesLang as $key => $p)
     	if ($key != "imgurl" AND !empty($p))
 	    	$selQ->select = array_merge($selQ->select,array($key." as ".$p[$language]));
-	$selQ->where = "p.id = '".$id."'";
+	$selQ->where = "p.promo != '0'";
 	$cleanProps = array();
 	for ($i=0;$i<count($propNames);$i++)
 		$selQ->select = array_merge($selQ->select,array($propNames[$i]." as `".$propLangName[$i]."`"));
@@ -80,12 +74,12 @@
 	if (checkTable($conn, "products_".$catid)) {
 		$selQ->tableNames[] = "products_".$catid." as nld";
 		$selQ->joins[] = "p.id = nld.infoid";
-		$selQ->joinTypes[] = "INNER JOIN";
+		$selQ->joinTypes[] = "LEFT JOIN";
 	}
 	if (checkTable($conn, "products_".$catid."_".$language)) {
 		$selQ->tableNames[] = "products_".$catid."_".$language." as ld";
 		$selQ->joins[] = "p.id = ld.infoid";
-		$selQ->joinTypes[] = "INNER JOIN";
+		$selQ->joinTypes[] = "LEFT JOIN";
 	}
 
 	if (!$selQ->executeQuery()){

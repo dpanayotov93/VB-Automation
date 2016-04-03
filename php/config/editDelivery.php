@@ -12,6 +12,8 @@
 		return;
 	}
 
+	$log = createLog(1); // ADD ADMIN LOG
+	
 	if (!empty($_POST['userid']) && !empty($_POST['type'])) {
 		$userid = $conn->real_escape_string($_POST['userid']);
 		$type = $conn->real_escape_string($_POST['type']);

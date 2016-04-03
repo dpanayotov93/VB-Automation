@@ -10,13 +10,16 @@
 		$userid = $conn->real_escape_string($_POST['userid']);
 	
 	$user = getUser($conn);
-	if ($user['access'] == 3)
+	if ($user['access'] == 3) {
 		$adminCheck = 1;
- 	else if ($user['id'] != $userid) {
+		$log = createLog(1); // ADD ADMIN LOG
+	} else if ($user['id'] != $userid) {
 		$statusMessage = makeStatusMessage(3,"error");
 		mysqli_close($conn);
 		return;
-	}
+	} else 
+		$log = createLog("","history","","",$userid);
+	
 	
 	require_once 'orderConfig.php';
 	

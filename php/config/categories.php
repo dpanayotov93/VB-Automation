@@ -7,6 +7,11 @@
 		return;
 	}
 	$user = getUser($conn);
+
+	if (empty($user))
+		$log = createLog("","categories");
+	else 
+		$log = createLog("","categories","","",$user['id']); 
 	
 	if (!isset($language))
 		$language = $GLOBALS['language'];
@@ -18,16 +23,8 @@
 	else 
 		$where = "parentid IS NULL OR parentid = 0";
 	if (isset($allLangs)) {
-		$langResult = getLanguages($conn);
-		if (is_null($langResult)) {
-			$statusMessage = makeStatusMessage(2, "error");
-			mysqli_close($conn);
-			return;
-		}
-		$langArr = array();
-		while ($l = $GLOBALS['langResult']->fetch_assoc())
-			$langArr[] = $l['abreviation'];
-		$data = getCat($where,$conn,null,$langArr);
+		require_once 'languageConfig.php';
+		$data = getCat($where,$conn,null,$langResult);
 	} else
 		$data = getCat($where,$conn,$GLOBALS['language'],null);
 	

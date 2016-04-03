@@ -17,6 +17,8 @@
 		mysqli_close($conn);
 		return;
 	}
+	
+	$log = createLog("","changeUserInfo","","",$id);
 
 	$selQ = new selectSQL($conn);
 	$selQ->select = array("u.id as uid", "i.userid as iid");

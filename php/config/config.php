@@ -1,5 +1,6 @@
 <?php
 
+require_once ("logConfig.php");
 require_once ("loginConfig.php");
 require_once ("statusConfig.php");
 
@@ -87,26 +88,5 @@ function nullToEmptyString($array) {
 		if (is_null($value))
 			$array[$key] = "";
 	return $array;
-}
-
-function getLanguages($conn) {
-	$selQ = new selectSQL($conn);
-	$selQ->select = array("abreviation");
-	$selQ->tableNames = array ("languages");
-	$selQ->executeQuery();
-	
-	if ($selQ->getNumberOfResults() == 0)
-		return null;
-	else 
-		return $selQ->result;
-	
-	/*
-	else {
-		$lang = array();
-		while ($r=$selQ->result->fetch_assoc())
-			$lang[] = $r['abreviation'];
-		return $lang;
-	}
-	*/
 }
 ?>

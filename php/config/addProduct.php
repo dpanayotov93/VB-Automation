@@ -6,19 +6,14 @@
 		return;
 	}
 	
-	$langResult = getLanguages($conn);
-	if (is_null($langResult)) {
-		$statusMessage = makeStatusMessage(2, "error");
-		mysqli_close($conn);
-		return;
-	}
-	
 	$user = getUser($conn);
 	if ($user['access'] != 3) {
 		$statusMessage = makeStatusMessage(3,"error");
 		mysqli_close($conn);
 		return;
 	}
+
+	$log = createLog(1); // ADD ADMIN LOG
 	
 	if (isset($_POST['show'])) 
 		getProds($conn);
@@ -55,6 +50,8 @@
 	}
 
 	function updProd($conn) {
+		require_once 'languageConfig.php';
+		
 		$catid = $conn->real_escape_string($_POST['catid']);
 		$arr = getPropsForCat($conn,$catid);
 		if (!$arr)
@@ -65,9 +62,6 @@
 		$propNames = $arr['propNames'];
 		$propNamesld = $arr['propNamesld'];
 		
-		$langArr = array();
-		while ($l = $GLOBALS['langResult']) 
-			$langArr[] = $l['abreviation'];
 		
 		$updQ = new updateSQL($conn);
 		$updQ->tableName = "products";
@@ -141,9 +135,7 @@
 	function insProd($conn) {
 		$catid = $conn->real_escape_string($_POST['catid']);
 
-		$langArr = array();
-		while($l = $GLOBALS['langResult']->fetch_assoc())
-			$langArr[] = $l['abreviation'];
+		require_once 'languageConfig.php';
 		
 		$arr = getPropsForCat($conn,$catid, null, $langArr);
 		if (!$arr)
@@ -259,16 +251,18 @@
 			$GLOBALS['statusMessage'] = makeStatusMessage(53, "error");
 			return;
 		}
-		$def = array();
-		$langArr = array();
-		while ($l = $GLOBALS['langResult']->fetch_assoc()) {
-			$def = array_merge($def, array("Name ".$l['abreviation'] => "names[".$l['abreviation']."]"));
-			$def = array_merge($def, array("Description ".$l['abreviation'] => "desc[".$l['abreviation']."]"));
-			$langArr[] = $l['abreviation'];
-		}
-
-		$def = array_merge($def, array("Price" => "price","Quantity" => "qty","Image" => "imgurl"));		
 		
+		require_once 'variables/productVariables.php';
+		require_once 'languageConfig.php';
+		
+		$def = array();
+
+		for ($i = 0; $i < count($propNamesDef); $i++)
+			$def = array_merge($def,array($propNamesLang[$propNamesDef[$i]][$language] => $propNamesDef[$i]));
+		foreach ($langArr as $l)
+			for ($i = 0; $i < count($propNamesDefldtemp); $i++)
+				$def = array_merge($def,array($propNamesLang[$propNamesDefldtemp[$i]][$language]." ".$l => $propNamesDefldtemp[$i].$l));
+	
 		$ld = array();
 		$lid = array();
 		while($r = $selQ->result->fetch_assoc())
@@ -283,9 +277,7 @@
 	}
 
 	function getProds($conn) {
-		$langArr = array();
-		while ($r = $GLOBALS['langResult']->fetch_assoc())
-			$langArr[] = $r['abreviation'];
+		require_once 'languageConfig.php';
 		
 		$catid = array();
 		if (empty($_POST['catid'])) {
@@ -365,7 +357,7 @@
 	}
 
 	function getPropsForCat($conn,$catid,$langArr = null,$insertQueryLangArr = null) {
-		
+		$language = $GLOBALS['language'];
 		include_once 'variables/productVariables.php';
 		
 		if (isset($langArr)) {
@@ -392,7 +384,7 @@
 		$selQ->tableNames = array("props_to_prods as ptp","properties as p");
 		$selQ->joins = array("p.id = ptp.propid");
 		$selQ->joinTypes = array("INNER JOIN");
-		$selQ->select = array("p.name as propName", "p.langDependant as ld", "p.name".$GLOBALS['language']." as `langName`");
+		$selQ->select = array("p.name as propName", "p.langDependant as ld", "p.name".$language." as `langName`");
 		$selQ->where = "ptp.catid = '".$catid."'";
 		if (!$selQ->executeQuery()) {
 			$GLOBALS['statusMessage'] = $selQ->status;

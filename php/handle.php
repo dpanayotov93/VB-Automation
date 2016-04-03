@@ -5,12 +5,13 @@
 	$q = "";
 	$data = array();
 	
+	if(empty($_POST["lang"]))
+		$language = "EN";
+	else
+		$language = $_POST["lang"];
+	
 	if (!empty($_POST["q"]))
 		if (file_exists("config/".$_POST["q"].".php")) {
-			if(empty($_POST["lang"]))
-				$language = "EN";
-			else 
-				$language = $_POST["lang"];
 			require_once("config/".$_POST["q"].".php");
 			$q = $_POST['q'];
 		}
@@ -23,11 +24,17 @@
 		$main = array($q => nullToEmptyString($data), "status" => $statusMessage);
 	else 
 		$main = array("status" => $statusMessage);
-	
-	//$main = utf8_string_array_encode($main);
 
 	echo json_encode($main,JSON_UNESCAPED_UNICODE);	
+	
+	if (isset($log))
+		if ($statusMessage['type'] == "error")
+			writeLog($log, $statusMessage['message']);
+		else 
+			writeLog($log);
 		
+			
+			
 	if(isset($GLOBALS['debugSQL']) && $GLOBALS['debugSQL'])
 		echo "<form method=post action=handle.php>
 		<input type=text name=q />
